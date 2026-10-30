@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SAY IT</title>
+<meta name="description" content="2人用の会話カードゲーム">
+<meta name="theme-color" content="#f5f5f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SAY IT">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0;font-size:14px;font-family:system-ui,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input{-webkit-user-select:text;user-select:text}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: quiet single column, lots of air. One cobalt accent; the theme card is a speech bubble. */
+:root{
+  --bg:#f5f5f2; --surface:#ffffff; --line:#e2e1db; --text:#141414; --muted:#6c6b66;
+  --accent:#2b44ff; --accent-ink:#ffffff; --accent-soft:#e7eaff; --ok:#1d9a62; --warn:#d9473d;
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111113;--surface:#1b1b1f;--line:#2d2d33;--text:#f1f0eb;--muted:#9b9993;--accent:#8193ff;--accent-ink:#0c0f24;--accent-soft:#222748;--ok:#4cc98e;--warn:#ff7c70;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111113;--surface:#1b1b1f;--line:#2d2d33;--text:#f1f0eb;--muted:#9b9993;--accent:#8193ff;--accent-ink:#0c0f24;--accent-soft:#222748;--ok:#4cc98e;--warn:#ff7c70;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+button{font:inherit;cursor:pointer;border:0;color:inherit;background:none}
+button:disabled{opacity:.35;cursor:default}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{min-height:100%;display:flex;flex-direction:column;max-width:440px;margin:0 auto;padding-block:12px 28px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.screen{display:flex;flex-direction:column;gap:20px;flex:1}
+.foil{color:var(--text)}
+
+/* logo: SAY + IT in a bubble */
+.logo{font-family:var(--display);font-weight:800;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:.18em;line-height:1}
+.logo b{background:var(--accent);color:var(--accent-ink);padding:.12em .3em .14em;border-radius:.42em;position:relative;font-weight:800}
+.logo b::after{content:"";position:absolute;left:.28em;bottom:-.2em;border:.13em solid transparent;border-top:.16em solid var(--accent);border-left:.16em solid var(--accent)}
+
+/* top bar */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:4px}
+.brand{font-size:17px}
+.snd{display:flex;gap:6px}
+.snd button{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.06em;padding:6px 10px;border-radius:999px;color:var(--muted);border:1px solid var(--line)}
+.snd button[aria-pressed=true]{color:var(--text);border-color:var(--text)}
+
+/* type */
+.eyebrow{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+h1{margin:10px 0 0;font-size:76px}
+h1 small{display:block;font-family:var(--body);font-weight:500;font-size:13px;letter-spacing:.3em;color:var(--muted);margin-top:18px}
+h2{font-weight:900;font-size:22px;margin:0;line-height:1.5;text-wrap:balance}
+.lede{color:var(--muted);margin:0;line-height:1.85;font-size:15px}
+.rule{height:1px;background:var(--line);font-size:0}
+
+/* form */
+.field{display:flex;flex-direction:column;gap:8px;min-width:0}
+input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;font-weight:700;font-size:17px}
+input[type=text]::placeholder{color:var(--muted);opacity:.6;font-weight:400}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
+.seg button{padding:11px 4px;border-radius:10px;font-weight:700;font-size:15px;color:var(--muted);transition:background .2s,color .2s}
+.seg button[aria-pressed=true]{background:var(--text);color:var(--bg)}
+.seg small{display:block;font-weight:400;font-size:10px;margin-top:2px;opacity:.8}
+
+/* buttons */
+.btn{padding:17px;border-radius:999px;font-weight:900;font-size:16px;letter-spacing:.06em;background:var(--accent);color:var(--accent-ink);transition:transform .12s}
+.btn:active:not(:disabled){transform:scale(.98)}
+.btn.ghost{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+.btn.small{padding:12px 10px;font-size:13.5px;font-weight:700;letter-spacing:.02em}
+.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+.spacer{flex:1;min-height:4px}
+.giveup{color:var(--muted);padding:10px 4px;font-size:13px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
+
+.rules{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 16px}
+.rules summary{padding:14px 0;font-weight:700;font-size:14px;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+.rules summary::after{content:"+";font-family:var(--display);font-size:18px;line-height:1;color:var(--muted)}
+.rules[open] summary::after{content:"−"}
+.rules ol{margin:0 0 16px;padding-left:20px;line-height:1.9;color:var(--muted);font-size:14px}
+
+/* scoreboard */
+.score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+.score .p{display:flex;flex-direction:column;min-width:0}
+.score .p:last-child{text-align:right}
+.score .n{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.score .v{font-family:var(--display);font-weight:800;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.score .mid{font-family:var(--display);font-weight:700;font-size:12px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums;line-height:1.6;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+
+/* theme card = speech bubble */
+.card{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:24px;padding:22px;position:relative;display:flex;flex-direction:column;gap:12px}
+.card .corner{display:flex;justify-content:space-between;align-items:center;font-family:var(--display);font-weight:700;font-size:12px;color:var(--muted)}
+.card .theme{font-weight:900;font-size:34px;line-height:1.4;margin:18px 0 14px;text-align:center;text-wrap:balance}
+.card .who{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;text-align:center}
+.card .who b{color:var(--text)}
+.bubble{margin-bottom:12px}
+.bubble::after{content:"";position:absolute;left:34px;bottom:-11px;width:20px;height:20px;background:var(--surface);border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg) skew(8deg,8deg);border-bottom-right-radius:4px}
+.tag{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-family:var(--body);font-weight:700;font-size:11px}
+.ornament,.stamp{display:none}
+.deal{animation:deal .4s cubic-bezier(.2,.9,.3,1.15)}
+@keyframes deal{from{transform:translateY(10px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.chg{align-self:center;color:var(--muted);padding:6px 12px;border-radius:999px;border:1px dashed var(--line);font-size:12px;font-weight:700}
+.hint{font-size:12.5px;color:var(--muted);margin:0;line-height:1.7;text-align:center}
+.mission-big{font-weight:900;font-size:24px;line-height:1.6;text-align:center;margin:8px 0;text-wrap:balance}
+
+/* mission tiles */
+.envs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.env{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 10px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;transition:border-color .2s}
+.env.seen{border-color:var(--text)}
+.wax{width:46px;height:46px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:20px}
+.env.seen .wax{background:var(--text);color:var(--bg)}
+.env span{font-weight:700;font-size:15px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.env small{color:var(--muted);font-size:11px}
+
+/* talk */
+.timer{font-family:var(--display);font-weight:500;font-size:56px;text-align:center;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.02em}
+.timer.over{color:var(--warn)}
+.claims{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.claim{padding:16px 8px 12px;border-radius:20px;background:var(--accent);color:var(--accent-ink);font-weight:900;font-size:16px;min-width:0;transition:transform .12s}
+.claim:active{transform:scale(.97)}
+.claim small{display:block;font-weight:700;font-size:12px;margin-top:2px;opacity:.85}
+.claim span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* summaries & results */
+.sum{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.sum b{font-weight:900}
+.sum .m{color:var(--muted);font-size:14px;line-height:1.7}
+.winner{text-align:center;font-weight:900;font-size:32px;margin:4px 0;text-wrap:balance;line-height:1.3}
+.final{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.final .box{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 10px;text-align:center;min-width:0}
+.final .box.win{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.final .box .n{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.final .box .v{font-family:var(--display);font-weight:800;font-size:60px;line-height:1.05;font-variant-numeric:tabular-nums}
+.final .box .d{font-size:11.5px;opacity:.75;line-height:1.7}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:11px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{color:var(--muted);font-weight:700;font-size:11px}
+td:first-child{font-weight:700}
+td small{color:var(--muted);font-size:11px}
+.gu td{opacity:.55}
+.toast{text-align:center;font-family:var(--display);font-weight:800;font-size:36px}
+
+/* overlay */
+.peek{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;overflow-y:auto;padding-block:calc(24px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.peek .inner{max-width:440px;width:100%;margin:auto;display:flex;flex-direction:column;gap:18px}
+.burst{position:fixed;inset:0;pointer-events:none;z-index:30}
+.pips{display:flex;justify-content:center;gap:5px;margin-top:8px}
+.pips i{width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;display:block;opacity:.7}
+.pips i.on{background:currentColor;opacity:1}
+.mrow{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+.mrow:first-of-type{border-top:0}
+.mrow .num{font-family:var(--display);font-weight:800;font-size:15px;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.mrow .mtxt{flex:1;min-width:0;font-weight:900;font-size:18px;line-height:1.55}
+.mrow .mtxt em{display:block;font-style:normal;font-size:11px;font-weight:700;color:var(--ok)}
+.mrow.done .mtxt{color:var(--muted);text-decoration:line-through}
+.mrow .chg{flex:none}
+@media (prefers-reduced-motion:reduce){.deal,.peek{animation:none}}
+.lv{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;margin-bottom:6px;letter-spacing:.02em}
+.lv1{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.lv2{background:var(--accent-soft);color:var(--accent)}
+.lv3{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.mtxt .lv{display:table;margin-bottom:4px}
+/* color pass: player A = cobalt, player B = raspberry, sunshine + mint as accents */
+:root{--pa:#2b44ff;--pa-soft:#e7eaff;--pb:#ff4f8b;--pb-soft:#ffe4ee;--sun:#ffc93c;--sun-soft:#fff4d4;--mint:#22b892;--mint-soft:#dcf6ee}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pa:#8193ff;--pa-soft:#222748;--pb:#ff7fab;--pb-soft:#3b1f2c;--sun:#ffd25e;--sun-soft:#3a3016;--mint:#4fd8b4;--mint-soft:#163329}}
+:root[data-theme="dark"]{--pa:#8193ff;--pa-soft:#222748;--pb:#ff7fab;--pb-soft:#3b1f2c;--sun:#ffd25e;--sun-soft:#3a3016;--mint:#4fd8b4;--mint-soft:#163329}
+body{background:radial-gradient(60% 40% at 0% 0%,var(--pa-soft),transparent 70%),radial-gradient(55% 35% at 100% 18%,var(--pb-soft),transparent 70%),radial-gradient(60% 40% at 50% 100%,var(--sun-soft),transparent 70%),var(--bg);background-attachment:fixed}
+.logo b{background:var(--pb);color:#fff}
+.logo b::after{border-top-color:var(--pb);border-left-color:var(--pb)}
+h1.logo b{box-shadow:5px 5px 0 var(--sun)}
+.eyebrow{color:var(--pa)}
+.btn{background:var(--pa);color:#fff;box-shadow:0 4px 0 var(--sun)}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--sun)}
+.btn.ghost{box-shadow:none}
+.seg button[aria-pressed=true]{background:var(--pa);color:#fff}
+.seg button[data-mode="date"][aria-pressed=true]{background:var(--pb)}
+.seg button[data-mode="drink"][aria-pressed=true]{background:var(--sun);color:#2a2105}
+.seg button[data-mode="all"][aria-pressed=true]{background:var(--mint);color:#04261d}
+.rules ol li::marker{color:var(--pb);font-weight:700}
+#n0{border-color:var(--pa)}#n1{border-color:var(--pb)}
+label[for=n0]{color:var(--pa)}label[for=n1]{color:var(--pb)}
+.score .p:first-child .v{color:var(--pa)}.score .p:last-child .v{color:var(--pb)}
+.score .mid{background:var(--sun-soft);border-color:transparent;color:var(--text)}
+.card.bubble{border:2px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(120deg,var(--pa),var(--pb) 55%,var(--sun)) border-box}
+.card.bubble::after{border-right:2px solid var(--pa);border-bottom:2px solid var(--pa)}
+.tag{background:var(--sun);color:#2a2105}
+.chg{border-color:var(--pb);color:var(--pb)}
+.env.p0 .wax{background:var(--pa-soft);color:var(--pa)}.env.p1 .wax{background:var(--pb-soft);color:var(--pb)}
+.env.p0.seen{border-color:var(--pa)}.env.p1.seen{border-color:var(--pb)}
+.env.p0.seen .wax{background:var(--pa);color:#fff}.env.p1.seen .wax{background:var(--pb);color:#fff}
+.timer{background:linear-gradient(90deg,var(--pa),var(--pb));-webkit-background-clip:text;background-clip:text;color:transparent}
+.timer.over{background:none;color:var(--warn)}
+.claim.p0{background:var(--pa);color:#fff;box-shadow:0 4px 0 var(--sun)}.claim.p1{background:var(--pb);color:#fff;box-shadow:0 4px 0 var(--sun)}
+.sum{border-left:4px solid var(--mint)}
+.final .box.p0.win{background:var(--pa);border-color:var(--pa);color:#fff}.final .box.p1.win{background:var(--pb);border-color:var(--pb);color:#fff}
+.final .box.p0:not(.win) .v{color:var(--pa)}.final .box.p1:not(.win) .v{color:var(--pb)}
+.final .box.win{box-shadow:5px 5px 0 var(--sun)}
+.mrow .num{background:var(--sun);color:#2a2105}
+.snd button[aria-pressed=true]{border-color:var(--pa);color:var(--pa)}
+.lv1{background:var(--mint-soft);color:var(--mint)}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div class="peek" id="peek" hidden><div class="inner" id="peekInner"></div></div>
+<script>
+// T: トークテーマ（共通・友達・デート・飲み会 各50＝200枚）  M: ミッション（共通140＋各モード20＝200個）
+const DATA={"T": {"all": ["好きな食べ物", "休日の過ごし方", "子どもの頃の夢", "最近ハマっていること", "旅行", "地元", "学生時代", "音楽", "映画・ドラマ", "朝の習慣", "コンビニ", "季節", "動物", "お金の使い方", "宝くじが当たったら", "特技", "苦手なもの", "失敗談", "人生で一番笑ったこと", "尊敬する人", "10年後の自分", "タイムマシン", "生まれ変わったら", "無人島に持っていくもの", "最後の晩餐", "理想の家", "スマホの中身", "SNS", "ゲーム", "スポーツ", "雨の日", "料理", "カフェ", "ファッション", "買い物", "睡眠", "夢の話", "怖い話", "マイルール", "今年の目標", "ストレス解消", "性格", "占い", "家族", "ペット", "仕事・バイト", "推し", "漫画・本", "透明人間になったら", "最近うれしかったこと"], "friend": ["学校の先生", "黒歴史", "修学旅行", "親友", "あだ名", "部屋の片付け", "おこづかい", "変なお客さん", "ラーメン", "深夜のノリ", "モテ期", "地元あるある", "運動会", "罰ゲーム", "グループでの役割", "ドッキリ", "卒業", "ゲームセンター", "寝坊", "次に遊ぶなら", "カラオケ", "文化祭", "テスト前の過ごし方", "給食", "放課後", "部活", "合宿", "バイト先の人間関係", "ルームシェアするなら", "2人の思い出", "最近見たおもしろ動画", "行ってみたいテーマパーク", "2人で起業するなら", "共通の知り合い", "昔流行ったもの", "子どもの頃の遊び", "夏休みの思い出", "人に言えない趣味", "ハマった食べ物ブーム", "友達との旅行", "自分の取扱説明書", "サークル", "誕生日の過ごし方", "ファミレス", "オールした日", "人生の分岐点", "最近の買ってよかったもの", "苦手な人のタイプ", "昔の自分にひと言", "くだらない喧嘩"], "date": ["理想のデート", "好きなタイプ", "初恋", "ドキッとする仕草", "記念日", "連絡の頻度", "一目惚れ", "褒め言葉", "手料理", "サプライズ", "甘え方", "一緒に住むなら", "ケンカと仲直り", "恋愛の失敗", "今日の服", "次のデート", "告白", "ヤキモチ", "夜景・星空", "2人の共通点", "第一印象", "デートの服選び", "プレゼント", "遠距離恋愛", "結婚観", "恋愛映画", "理想の休日を2人で", "デートの割り勘", "恋人の呼び方", "デートでの食事", "ペアグッズ", "旅行デート", "雨の日デート", "恋愛ソング", "モテる人の特徴", "好きな香り", "待ち合わせ", "恋人とやりたいこと", "もし付き合ったら", "印象が変わった瞬間", "ギャップ", "手をつなぐタイミング", "記念写真", "恋愛相談", "理想のプロポーズ", "束縛", "休日の朝", "恋人の友達", "クリスマスの過ごし方", "今日一番楽しかったこと"], "drink": ["好きなお酒", "酔うとどうなる", "お酒の失敗談", "締めの一品", "最強のおつまみ", "居酒屋の注文", "乾杯の挨拶", "二次会", "終電", "はしご酒", "宅飲み", "飲み会での役割", "上司・先輩の話", "新歓の思い出", "ノンアルの楽しみ方", "お酒の強さ", "二日酔い対策", "飲み会ゲーム", "ここだけの話", "恋バナ", "最近の愚痴", "褒め合いタイム", "職場・学校のあるある", "理想の上司", "人生で一番飲んだ日", "行きつけの店", "焼き鳥はタレか塩か", "最初の一杯", "飲み会での名言", "カラオケの選曲", "酔って言われたひと言", "記憶がない夜", "もし店を開くなら", "今年一番の事件", "本音で話すと", "言えなかったひと言", "人生相談", "好きなチェーン店", "飲み会でモテる人", "酔ったときの癖", "給料日の過ごし方", "理想の飲み友達", "朝まで語りたいこと", "地元の居酒屋", "お酒と料理の組み合わせ", "飲み放題の元の取り方", "今乾杯したいこと", "来年やりたいこと", "学生時代の飲み会", "酒豪伝説"]}, "M": {"all": ["1|相手に食べ物の名前を言わせる", "1|相手に動物の名前を言わせる", "1|相手に色の名前を言わせる", "1|相手に地名（国・都市・駅など）を言わせる", "1|相手に数字を言わせる", "1|相手に人の名前を言わせる", "1|相手に季節に関係する言葉を言わせる", "1|相手に乗り物の名前を言わせる", "1|相手に飲み物の名前を言わせる", "1|相手にお店の名前を言わせる", "1|相手に驚いたリアクションをさせる", "1|相手に共感の言葉を言わせる（わかる・たしかに など）", "1|相手を笑わせる", "1|相手から質問させる", "1|相手に好きなものを1つ言わせる", "1|相手に嫌いなもの・苦手なものを言わせる", "1|相手に過去の思い出を話させる", "1|相手にこれからの予定を言わせる", "1|相手に家族の誰かの話をさせる", "1|相手に友達の話をさせる", "1|相手に子どもの頃の話をさせる", "1|相手に最近あった出来事を話させる", "1|相手に自分のことを褒めさせる", "1|相手に何かをおすすめさせる", "1|相手に感謝の言葉を言わせる", "1|相手に行きたい場所を言わせる", "1|相手にやってみたいことを言わせる", "1|相手にほしいものを言わせる", "1|相手に体の部位の名前を言わせる", "1|相手に曜日か日付を言わせる", "1|相手に時刻（何時など）を言わせる", "1|相手に天気に関する言葉を言わせる", "1|相手にお金に関する話をさせる", "1|相手に趣味の話をさせる", "1|相手に仕事か学校の話をさせる", "1|相手に食べたいものを言わせる", "1|相手に音楽や曲の話をさせる", "1|相手に映画・ドラマ・アニメのタイトルを言わせる", "1|相手に有名人の名前を言わせる", "1|相手にスポーツの名前を言わせる", "1|相手に疑問形で返させる（〜なの？ など）", "1|相手に否定させる（いや・違う など）", "1|相手に賛成させる（いいね・そうだね など）", "1|相手にジェスチャーをさせる", "1|相手に3回うなずかせる", "1|相手に考え込ませる（うーん・えーと など）", "1|相手にカタカナ語を言わせる", "1|相手に擬音語を言わせる（ドキドキ・ワクワク など）", "1|相手に感想を言わせる（おいしい・楽しい など）", "1|相手に失敗談を話させる", "1|相手に自慢話をさせる", "1|相手に悩みや困っていることを話させる", "1|相手に自分の性格について話させる", "1|相手に住んでいる場所の話をさせる", "1|相手に休日の過ごし方を話させる", "1|相手に「〜したことある？」と聞かせる", "1|相手に比べる言葉を言わせる（〜より・〜の方が など）", "1|相手に程度を表す言葉を言わせる（すごく・ちょっと など）", "1|相手にスマホやアプリの話をさせる", "1|相手に家の中にある物の名前を言わせる", "1|相手に服や持ち物の話をさせる", "1|相手に理由を説明させる（〜だから など）", "1|相手に謝らせる（ごめん・すみません など）", "1|相手に「AとBどっち？」で選ばせる", "1|相手に将来の夢を話させる", "1|相手にあいさつの言葉を言わせる（おはよう・お疲れ など）", "1|相手に楽しかったことを話させる", "1|相手に昔ハマっていたものを話させる", "1|相手に誰かの名前を呼ばせる", "1|相手に「好き」か「嫌い」と言わせる", "2|相手に「たしかに」と言わせる", "2|相手に「なるほど」と言わせる", "2|相手に「わかる」と言わせる", "2|相手に「すごい」と言わせる", "2|相手に「やばい」と言わせる", "2|相手に「まじで？」と言わせる", "2|相手に「なんで？」と言わせる", "2|相手に「いいね」と言わせる", "2|相手に「ありがとう」と言わせる", "2|相手に「懐かしい」と言わせる", "2|相手に「おいしそう」と言わせる", "2|相手に「行ってみたい」と言わせる", "2|相手に「えー！」と言わせる", "2|相手に「知らなかった」と言わせる", "2|相手に「ちょっと待って」と言わせる", "2|相手に「それで？」と聞かせる", "2|相手に「うらやましい」と言わせる", "2|相手に「おもしろい」と言わせる", "2|相手に「かわいい」と言わせる", "2|相手に「かっこいい」と言わせる", "2|相手に「最高」と言わせる", "2|相手に「無理」と言わせる", "2|相手に「お腹すいた」と言わせる", "2|相手に「疲れた」と言わせる", "2|相手に「眠い」と言わせる", "2|相手に「暑い」か「寒い」と言わせる", "2|相手に食べ物の名前を3つ言わせる", "2|相手に動物の名前を2つ言わせる", "2|相手に国の名前を言わせる", "2|相手に芸能人の名前を2人言わせる", "2|相手に歌をワンフレーズ歌わせる", "2|相手に誰かのモノマネをさせる", "2|相手にスマホの写真を見せてもらう", "2|相手に何かを約束させる", "2|相手に自分のあだ名を考えさせる", "2|相手に30秒以上話し続けさせる", "2|相手に誕生日を言わせる", "2|相手に出身地を言わせる", "2|相手にクイズを出させる", "2|相手に自分の意見に反対させる", "2|相手に方言を言わせる", "2|相手にため息をつかせる", "2|相手に手を叩かせる", "2|相手に指で数を数えさせる", "2|相手を2回笑わせる", "3|相手に「めっちゃ」と言わせる", "3|相手に「ラーメン」と言わせる", "3|相手に「猫」と言わせる", "3|相手に「宇宙」と言わせる", "3|相手に「恐竜」と言わせる", "3|相手に「冷蔵庫」と言わせる", "3|相手に「富士山」と言わせる", "3|相手に「新幹線」と言わせる", "3|相手に「パンダ」と言わせる", "3|相手に「誕生日」と言わせる", "3|相手に「魔法」と言わせる", "3|相手に「忍者」と言わせる", "3|相手に「天才」と言わせる", "3|相手に「さすが」と言わせる", "3|相手に「ずるい」と言わせる", "3|相手に「もったいない」と言わせる", "3|相手に「ちなみに」と言わせる", "3|相手に「逆に」と言わせる", "3|相手に「なんだかんだ」と言わせる", "3|相手に「一応」と言わせる", "3|相手に「結局」と言わせる", "3|相手に「100」と言わせる", "3|相手に「赤」と言わせる", "3|相手に「なんか」を3回言わせる", "3|相手に同じ言葉を2回くり返させる（いやいや など）"], "friend": ["1|相手に学生時代の思い出を話させる", "1|相手に共通の知り合いの名前を言わせる", "1|相手に「今度〇〇しよう」と誘わせる", "1|相手にツッコませる", "1|相手にハマっていたゲームや漫画の話をさせる", "1|相手に恥ずかしい話をさせる", "1|相手に遊びの予定を立てさせる", "1|相手に地元の話をさせる", "1|相手にボケさせる", "1|相手に笑いながら否定させる", "2|相手に「それな」と言わせる", "2|相手に「ウケる」と言わせる", "2|相手に「やめて」と言わせる", "2|相手に変顔をさせる", "2|相手とハイタッチする", "2|相手に昔のあだ名を言わせる", "3|相手に「エモい」と言わせる", "3|相手に「親友」と言わせる", "3|相手に「おごって」と言わせる", "3|相手に「じゃんけん」と言わせる"], "date": ["1|相手に好きなタイプの話をさせる", "1|相手に行きたいデートの場所を言わせる", "1|相手に自分の見た目について何か言わせる", "1|相手に恋愛の思い出を話させる", "1|相手を照れさせる", "1|相手に次に会う話をさせる", "1|相手に好きな仕草や雰囲気を話させる", "1|相手に褒め言葉を言わせる", "1|相手に理想の休日を話させる", "1|相手に自分の第一印象を言わせる", "2|相手に「楽しい」と言わせる", "2|相手に「うれしい」と言わせる", "2|相手に「優しい」と言わせる", "2|相手に「似合う」と言わせる", "2|相手に「一緒に行こう」と言わせる", "2|相手と5秒目を合わせる", "3|相手に「ドキッとした」と言わせる", "3|相手に「また会いたい」と言わせる", "3|相手に「付き合ったら」と言わせる", "3|相手に「素敵」と言わせる"], "drink": ["1|相手にお酒の名前を言わせる", "1|相手におつまみの名前を言わせる", "1|相手に酔ったときの話をさせる", "1|相手に愚痴を言わせる", "1|相手に本音を話させる", "1|相手に飲み物を注文させる（おかわりもOK）", "1|相手に何か飲ませる", "1|相手に飲み会の思い出を話させる", "1|相手に明日の予定を言わせる", "1|相手に行きつけのお店の話をさせる", "2|相手に「乾杯」と言わせる", "2|相手に「おいしい」と言わせる", "2|相手に「もう一杯」と言わせる", "2|相手に「酔ってきた」と言わせる", "2|相手に「ここだけの話」と言わせる", "2|相手にグラスを持ち上げさせる", "3|相手に「二日酔い」と言わせる", "3|相手に「終電」と言わせる", "3|相手に「しらふ」と言わせる", "3|相手に「記憶ない」と言わせる"]}};
+const MODES={friend:"友達",date:"デート",drink:"飲み会",all:"全て"};
+const TH=[],MS=[];
+for(const k of ["all","friend","date","drink"]){DATA.T[k].forEach(t=>TH.push({id:TH.length+1,kind:k,t}));DATA.M[k].forEach(x=>{const n=x.indexOf("|");MS.push({kind:k,lv:+x.slice(0,n),m:x.slice(n+1)})})}
+const LV={};MS.forEach(x=>LV[x.m]=x.lv);const lvOf=m=>LV[m]||1,valOf=m=>lvOf(m)===3?2:1;
+const badge=m=>`<span class="lv lv${lvOf(m)}">難易度${lvOf(m)}${lvOf(m)===3?" ・ 2pt":" ・ 1pt"}</span>`;
+const inMode=k=>k==="all"||S.mode==="all"||k===S.mode;
+
+/* ===== Sound: all synthesized with Web Audio (no files) ===== */
+const AU={ctx:null,master:null,sfx:null,bgm:null,verb:null,sched:null,next:0,step:0};
+function audioInit(){
+  if(AU.ctx){if(AU.ctx.state==="suspended")AU.ctx.resume();return true}
+  const C=window.AudioContext||window.webkitAudioContext;if(!C)return false;
+  try{AU.ctx=new C()}catch(e){return false}
+  const c=AU.ctx;
+  AU.master=c.createGain();AU.master.gain.value=.9;AU.master.connect(c.destination);
+  AU.sfx=c.createGain();AU.sfx.gain.value=S.sfxOn===false?0:.7;AU.sfx.connect(AU.master);
+  AU.bgm=c.createGain();AU.bgm.gain.value=0;AU.bgm.connect(AU.master);
+  // small hall reverb from generated impulse
+  const len=c.sampleRate*2.4,ir=c.createBuffer(2,len,c.sampleRate);
+  for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3.2)}
+  AU.verb=c.createConvolver();AU.verb.buffer=ir;const vg=c.createGain();vg.gain.value=.32;AU.verb.connect(vg);vg.connect(AU.master);
+  // iOS unlock
+  const b=c.createBuffer(1,1,22050),s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0);
+  return true;
+}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function voice(dest,{f,t,dur=.4,type="sine",vol=.2,a=.005,glide=null,verb=.4,harm=0}){
+  const c=AU.ctx;if(!c)return;
+  const g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  g.connect(dest);if(verb){const vs=c.createGain();vs.gain.value=verb;g.connect(vs);vs.connect(AU.verb)}
+  const o=c.createOscillator();o.type=type;o.frequency.setValueAtTime(f,t);if(glide)o.frequency.exponentialRampToValueAtTime(glide,t+dur);o.connect(g);o.start(t);o.stop(t+dur+.05);
+  if(harm){const o2=c.createOscillator(),g2=c.createGain();o2.type="sine";o2.frequency.setValueAtTime(f*harm,t);g2.gain.setValueAtTime(vol*.25,t);g2.gain.exponentialRampToValueAtTime(.0001,t+dur*.4);o2.connect(g2);g2.connect(g);o2.start(t);o2.stop(t+dur)}
+}
+function noise(dest,{t,dur=.2,vol=.15,f1=800,f2=3000,q=1.2,verb=.2}){
+  const c=AU.ctx;if(!c)return;
+  const len=Math.ceil(c.sampleRate*dur),b=c.createBuffer(1,len,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  const s=c.createBufferSource();s.buffer=b;const bp=c.createBiquadFilter();bp.type="bandpass";bp.Q.value=q;bp.frequency.setValueAtTime(f1,t);bp.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  const g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+dur*.3);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  s.connect(bp);bp.connect(g);g.connect(dest);if(verb){const vs=c.createGain();vs.gain.value=verb;g.connect(vs);vs.connect(AU.verb)}s.start(t);s.stop(t+dur);
+}
+function sfx(name){
+  if(!AU.ctx||S.sfxOn===false)return;const t=AU.ctx.currentTime+.01,D=AU.sfx;
+  const bell=(m,w,v=.1,d=1.2)=>voice(D,{f:mtof(m),t:t+w,dur:d,type:"sine",vol:v,harm:3,verb:.5});
+  const pop=(w,f1=500,f2=1100,v=.12)=>voice(D,{f:f1,t:t+w,dur:.09,type:"sine",vol:v,glide:f2,verb:.1});
+  switch(name){
+    case"click":voice(D,{f:1900,t,dur:.025,type:"sine",vol:.03,verb:0});break;
+    case"swish":noise(D,{t,dur:.22,vol:.06,f1:1200,f2:4500,q:.7,verb:.15});break;
+    case"open":pop(0);bell(84,.06,.07,1.2);bell(88,.12,.05,1.2);break;
+    case"seal":pop(0,900,480,.1);break;
+    case"start":[72,76,79].forEach((m,i)=>bell(m,i*.09,.09,1.4));break;
+    case"suspense":voice(D,{f:440,t,dur:.5,type:"sine",vol:.06,glide:880,verb:.4});noise(D,{t,dur:.45,vol:.04,f1:2000,f2:8000,q:.5,verb:.3});break;
+    case"success":[72,76,79,84].forEach((m,i)=>bell(m,i*.07,.1,1));pop(0,700,1500,.08);break;
+    case"reject":voice(D,{f:330,t,dur:.18,type:"sine",vol:.08,verb:.2});voice(D,{f:262,t:t+.16,dur:.28,type:"sine",vol:.08,verb:.2});break;
+    case"giveup":[79,76,72].forEach((m,i)=>bell(m,i*.14,.08,.9));break;
+    case"tick":voice(D,{f:1250,t,dur:.04,type:"sine",vol:.05,verb:0});break;
+    case"timeup":bell(84,0,.12,1.6);bell(79,.4,.12,1.8);break;
+    case"fanfare":[[60,64,67,71],[62,65,69,72],[64,67,71,76]].forEach((ch,k)=>ch.forEach(m=>bell(m+12,k*.22,.05,k===2?2.2:.6)));break;
+  }
+}
+/* BGM: lo-fi jazz hop — dusty swung drums, warm Rhodes 7ths, round bass, vinyl crackle, sparse bell melody */
+const PROG=[{b:41,c:[57,60,64,67]},{b:40,c:[55,59,62,64]},{b:38,c:[53,57,60,64]},{b:36,c:[55,59,60,64]}];
+const BPM=78,SIX=60/BPM/4,SWING=SIX*.34;
+function lpOut(freq){const f=AU.ctx.createBiquadFilter();f.type="lowpass";f.frequency.value=freq;f.connect(AU.bgm);return f}
+function keys(t,m,vol,dur){voice(AU.bgm,{f:mtof(m),t,dur,type:"sine",vol,a:.01,harm:3,verb:.35})}
+function kick(t,v=.38){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.setValueAtTime(105,t);o.frequency.exponentialRampToValueAtTime(44,t+.12);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+.38);o.connect(g);g.connect(AU.bgm);o.start(t);o.stop(t+.4)}
+function snap(t,v=.07){noise(AU.bgm,{t,dur:.12,vol:v,f1:1900,f2:1400,q:1.2,verb:.35});voice(AU.bgm,{f:330,t,dur:.04,type:"triangle",vol:v*.5,verb:0})}
+function hat(t,v=.018){noise(AU.bgm,{t,dur:.04,vol:v,f1:7000,f2:8000,q:.8,verb:0})}
+function bassN(t,m,dur){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=mtof(m);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(lpOut(380));o.start(t);o.stop(t+dur+.05)}
+function crackle(t){if(Math.random()<.35)noise(AU.bgm,{t:t+Math.random()*SIX,dur:.008,vol:.025+Math.random()*.03,f1:3000,f2:3000,q:.5,verb:0})}
+const PENTA=[0,2,4,7,9];
+function bgmStep(t0,s){
+  const bar=Math.floor(s/16)%PROG.length,p=PROG[bar],nx=PROG[(bar+1)%PROG.length],i=s%16,t=t0+(i%2?SWING:0);
+  crackle(t0);
+  if(i===0||i===10||(i===7&&Math.random()<.4))kick(t,i===0?.38:.3);
+  if(i===4||i===12)snap(t+.012);
+  if(i%2===0)hat(t,i%4===0?.022:.014);else if(Math.random()<.25)hat(t,.008);
+  if(i===0)bassN(t,p.b,SIX*6);
+  if(i===8)bassN(t,p.b+7,SIX*3);
+  if(i===14)bassN(t,nx.b+1,SIX*2);
+  if(i===0)p.c.forEach((m,k)=>keys(t+k*.02,m,.034,SIX*9));
+  if(i===11)p.c.forEach(m=>keys(t,m,.018,SIX*3));
+  if(i%2===0&&i>0&&Math.random()<.18){const m=72+PENTA[Math.floor(Math.random()*5)];voice(AU.bgm,{f:mtof(m),t,dur:SIX*5,type:"sine",vol:.028,harm:4,verb:.6})}
+}
+function bgmStart(){
+  if(!AU.ctx||S.bgmOn===false)return;
+  const c=AU.ctx;AU.bgm.gain.cancelScheduledValues(c.currentTime);AU.bgm.gain.setTargetAtTime(.8,c.currentTime,.8);
+  if(AU.sched)return;AU.next=c.currentTime+.1;AU.step=0;
+  AU.sched=setInterval(()=>{while(AU.next<c.currentTime+.3){bgmStep(AU.next,AU.step);AU.next+=SIX;AU.step++}},60);
+}
+function bgmStop(){
+  if(!AU.ctx)return;const c=AU.ctx;AU.bgm.gain.setTargetAtTime(0,c.currentTime,.4);
+  const sch=AU.sched;AU.sched=null;setTimeout(()=>{if(!AU.sched)clearInterval(sch)},1500);
+}
+function setSfx(on){S.sfxOn=on;if(AU.sfx)AU.sfx.gain.value=on?.7:0;save()}
+function setBgm(on){S.bgmOn=on;save();if(on){audioInit();bgmStart()}else bgmStop()}
+document.addEventListener("pointerdown",()=>{if(audioInit()&&S.bgmOn!==false&&S.screen!=="home"&&!AU.sched)bgmStart()},{capture:true});
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(b&&!b.dataset.quiet)sfx("click")},{capture:true});
+document.addEventListener("visibilitychange",()=>{if(!AU.ctx)return;if(document.hidden)AU.ctx.suspend();else AU.ctx.resume()});
+
+/* gold sparkle burst on success */
+function burst(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const cv=document.createElement("canvas");cv.className="burst";document.body.appendChild(cv);
+  const cs=getComputedStyle(document.documentElement),COLS=["--pa","--pb","--sun","--mint"].map((v,k)=>cs.getPropertyValue(v).trim()||["#2b44ff","#ff4f8b","#ffc93c","#22b892"][k]);const dpr=devicePixelRatio||1,W=cv.width=innerWidth*dpr,H=cv.height=innerHeight*dpr,x=cv.getContext("2d");
+  const ps=Array.from({length:90},()=>({x:W/2,y:H*.42,vx:(Math.random()-.5)*14*dpr,vy:(Math.random()-.9)*12*dpr,r:(1+Math.random()*2.6)*dpr,l:1,c:COLS[Math.floor(Math.random()*COLS.length)]}));
+  let f=0;(function draw(){x.clearRect(0,0,W,H);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.32*dpr;p.vx*=.985;p.l-=.012;x.globalAlpha=Math.max(0,p.l);x.fillStyle=p.c;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});
+  if(++f<90)requestAnimationFrame(draw);else cv.remove()})();
+}
+
+const KEY="say-it-v1";
+let S=load()||fresh();
+function fresh(){return {screen:"home",names:["",""],mode:"friend",limit:300,turn:0,usedT:[],usedM:[],cur:null,log:[],left:300,elapsed:0,runAt:null,flash:null,sfxOn:true,bgmOn:true}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{const v=localStorage.getItem(KEY);const o=v?JSON.parse(v):null;return o&&o.screen?o:null}catch(e){return null}}
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nm=i=>esc(S.names[i]||(i?"プレイヤーB":"プレイヤーA"));
+const cnt=d=>d.filter(Boolean).length;
+const ptsOf=(ms,d)=>ms.reduce((a,m,k)=>a+(d[k]?valOf(m):0),0);
+// 得点＝達成したミッションの数（1つ1点）。今のお題で達成した分も含める
+function totals(){const t=S.log.reduce((t,r)=>[t[0]+r.pts[0],t[1]+r.pts[1]],[0,0]);if(S.cur&&S.screen!=="result"&&S.screen!=="home"){t[0]+=ptsOf(S.cur.ms[0],S.cur.done[0]);t[1]+=ptsOf(S.cur.ms[1],S.cur.done[1])}return t}
+const fmt=s=>{const a=Math.max(0,Math.abs(s));return Math.floor(a/60)+":"+String(a%60).padStart(2,"0")};
+
+function drawTheme(){let p=TH.filter(x=>inMode(x.kind)&&!S.usedT.includes(x.id));if(!p.length){S.usedT=[];p=TH.filter(x=>inMode(x.kind))}const t=pick(p);S.usedT.push(t.id);return t}
+// 指定した難易度の山から引く（使い切ったらその難易度だけ山を戻す）
+function drawMission(excl,lv){const base=MS.filter(x=>inMode(x.kind)&&x.lv===lv).map(x=>x.m);let p=base.filter(m=>!S.usedM.includes(m)&&!excl.includes(m));if(!p.length){S.usedM=S.usedM.filter(m=>lvOf(m)!==lv);p=base.filter(m=>!excl.includes(m))}const m=pick(p);S.usedM.push(m);return m}
+
+/* clock: runs only on the talk screen while no overlay is open */
+function now(){return Date.now()}
+function runClock(){if(!S.runAt)S.runAt=now()}
+function stopClock(){if(S.runAt){const d=(now()-S.runAt)/1000;S.elapsed+=d;if(S.limit)S.left-=d;S.runAt=null}}
+function liveLeft(){const d=S.runAt?(now()-S.runAt)/1000:0;return S.limit?Math.ceil(S.left-d):Math.floor(S.elapsed+d)}
+
+function start(){audioInit();sfx("start");bgmStart();S.turn=0;S.log=[];S.usedT=[];S.usedM=[];S.left=S.limit;S.elapsed=0;S.runAt=null;S.flash=null;newTurn();S.screen="missions";render()}
+function newTurn(){
+  // 2人とも「難易度3を1つ＋難易度1か2を1つ」。2つ目の難易度は2人で同じにして毎回公平にする
+  const second=Math.random()<.55?1:2,all=[];
+  for(let p=0;p<2;p++){all.push(drawMission(all,3));all.push(drawMission(all,second))}
+  for(const o of [0,2])if(Math.random()<.5)[all[o],all[o+1]]=[all[o+1],all[o]];
+  S.cur={theme:drawTheme(),ms:[[all[0],all[1]],[all[2],all[3]]],done:[[false,false],[false,false]],seen:[false,false],tChanged:false,mChanged:[false,false]};
+}
+function logTurn(win){const c=S.cur;S.log.push({theme:c.theme.t,ms:c.ms.map(x=>x.slice()),done:c.done.map(x=>x.slice()),pts:[ptsOf(c.ms[0],c.done[0]),ptsOf(c.ms[1],c.done[1])],win})}
+function endTurn(win){
+  stopClock();logTurn(win);
+  S.flash={win,pts:S.log[S.log.length-1].pts};S.turn++;newTurn();S.screen="missions";render();scrollTo(0,0);
+}
+function finish(){stopClock();if(S.cur&&(S.screen==="talk"||cnt(S.cur.done[0])+cnt(S.cur.done[1])>0))logTurn(-2);S.cur=null;sfx("fanfare");S.screen="result";render();scrollTo(0,0)}
+
+let tick=null;
+function render(){
+  save();clearInterval(tick);
+  document.getElementById("app").innerHTML=`<div class="screen">${topbar()}${({home,missions,talk,result})[S.screen]()}</div>`;
+  bind();
+  if(S.screen==="talk"){tick=setInterval(onTick,250);onTick()}
+}
+function onTick(){
+  const el=document.getElementById("clock");if(!el)return;
+  const v=liveLeft();
+  if(S.limit&&v<=10&&v>0&&v!==AU.lastTick){AU.lastTick=v;sfx("tick")}
+  if(S.limit&&v<=0){stopClock();S.left=0;timeUp();return}
+  el.textContent=fmt(v);
+  el.classList.toggle("over",S.limit&&v<=30);
+}
+function timeUp(){
+  clearInterval(tick);sfx("timeup");
+  PI().innerHTML=`<div class="toast">TIME UP</div><p class="lede" style="text-align:center">ここまでに達成したミッションの点数で決着です。</p>
+  <button class="btn" data-pact="finish">結果を見る</button>`;P().hidden=false;bindPeek();
+}
+
+function topbar(){
+  return `<div class="topbar"><span class="brand logo">SAY <b>IT</b></span><div class="snd">
+  <button data-snd="bgm" data-quiet="1" aria-pressed="${S.bgmOn!==false}">BGM ${S.bgmOn!==false?"ON":"OFF"}</button>
+  <button data-snd="sfx" data-quiet="1" aria-pressed="${S.sfxOn!==false}">SE ${S.sfxOn!==false?"ON":"OFF"}</button></div></div>`;
+}
+function scoreboard(){
+  const t=totals();
+  const clock=S.limit?`残り ${fmt(S.screen==="talk"?liveLeft():Math.ceil(S.left))}`:`経過 ${fmt(S.screen==="talk"?liveLeft():Math.floor(S.elapsed))}`;
+  return `<div class="score"><div class="p"><span class="n">${nm(0)}</span><span class="v">${t[0]}</span></div>
+  <div class="mid">お題 ${S.turn+1}<br>${clock}</div>
+  <div class="p"><span class="n">${nm(1)}</span><span class="v">${t[1]}</span></div></div>`;
+}
+function themeCard(extra=""){
+  const c=S.cur.theme;
+  return `<div class="card bubble deal"><div class="corner"><span class="tag ${c.kind==="date"?"d":c.kind==="friend"?"f":""}">${c.kind==="all"?"トークテーマ":MODES[c.kind]}</span><span>#${String(c.id).padStart(3,"0")}</span></div>
+  <div class="theme">${esc(c.t)}</div>
+  <button class="chg" data-act="chgtheme" ${S.cur.tChanged?"disabled":""}>${S.cur.tChanged?"テーマ変更済み":"テーマを変える（1回）"}</button>${extra}</div>`;
+}
+const pips=d=>`<span class="pips">${d.map(x=>`<i class="${x?"on":""}"></i>`).join("")}</span>`;
+
+function home(){
+  const seg=(attr,val,list)=>list.map(([v,l,s])=>`<button data-${attr}="${v}" aria-pressed="${val===v}">${l}${s?`<small>${s}</small>`:""}</button>`).join("");
+  return `<div><div class="eyebrow">A conversation game for two</div><h1 class="logo">SAY <b>IT</b></h1></div>
+  <p class="lede">ひとりに2つずつ、秘密のミッション。テーマについて話しながら、さりげなく相手に言わせたら勝ち。</p>
+  <div class="row">
+    <div class="field"><label class="label" for="n0">プレイヤーA</label><input type="text" id="n0" maxlength="10" placeholder="なまえ" value="${esc(S.names[0])}"></div>
+    <div class="field"><label class="label" for="n1">プレイヤーB</label><input type="text" id="n1" maxlength="10" placeholder="なまえ" value="${esc(S.names[1])}"></div>
+  </div>
+  <div class="rule">.</div>
+  <div class="field"><span class="label">モード</span><div class="seg" style="grid-template-columns:1fr 1fr">
+    ${seg("mode",S.mode,[["friend","友達","テーマ100・ミッション160"],["date","デート","テーマ100・ミッション160"],["drink","飲み会","テーマ100・ミッション160"],["all","全て","テーマ200・ミッション200"]])}</div></div>
+  <div class="field"><span class="label">制限時間</span><div class="seg">
+    ${seg("limit",S.limit,[[300,"5分"],[600,"10分"],[0,"無制限"]])}</div></div>
+  <details class="rules"><summary>あそびかた・得点</summary><ol>
+    <li>お題ごとにトークテーマ1枚と、ひとり2つずつの秘密ミッションがランダムで配られる。</li>
+    <li>自分の名前のカードをタップして、ミッションを確認する（相手は見ない）。</li>
+    <li>ミッションには難易度1〜3がついている。1は答えが何通りもある言わせやすいもの、3は特定の言葉を言わせる難しいもの。</li>
+    <li>ひとりの2つは必ず「難易度3が1つ＋難易度1か2が1つ」。2つ目の難易度は2人とも同じなので、いつも同じ条件で勝負。</li>
+    <li>相手に言わせたら「言わせた！」をタップしてミッションを選ぶ。相手が認めたら難易度1・2は+1点、難易度3は+2点。</li>
+    <li>先に2つとも達成した人がそのお題の勝ち。次のテーマとミッションへ進む。</li>
+    <li>テーマは1回、ミッションはひとり1回まで、1つのお題の中で変えられる。</li>
+    <li>行き詰まったら「ギブアップ」で次へ。それまでの得点はそのまま、追加点はなし。</li>
+    <li>時間切れ（無制限なら「ゲーム終了」）で合計点が高い人の勝ち。</li>
+  </ol></details>
+  <div class="spacer"></div>
+  <button class="btn" data-act="start">ゲームをはじめる</button>`;
+}
+
+function missions(){
+  const f=S.flash;S.flash=null;
+  const banner=!f?"":`<div class="sum" style="text-align:center"><b>${f.win>=0?`${nm(f.win)}さんが2つとも達成`:"ギブアップ"}</b><span class="m">前のお題の得点 ― ${nm(0)} +${f.pts[0]}／${nm(1)} +${f.pts[1]}</span></div>`;
+  return `${scoreboard()}${banner}${themeCard()}
+  <div class="label">ミッション ― 自分の分だけ見てね</div>
+  <div class="envs">${[0,1].map(i=>`<button class="env p${i} ${S.cur.seen[i]?"seen":""}" data-peek="${i}"><div class="wax">${S.cur.seen[i]?"✓":"?"}</div><span>${nm(i)}</span><small>${S.cur.seen[i]?"確認済み":"タップして見る"}</small></button>`).join("")}</div>
+  <div class="spacer"></div>
+  <button class="btn" data-act="talk" data-quiet="1" ${S.cur.seen[0]&&S.cur.seen[1]?"":"disabled"}>トーク開始${S.turn===0?"（時間スタート）":""}</button>
+  ${S.turn>0?`<button class="giveup" data-act="end">ゲームを終了して結果を見る</button>`:""}`;
+}
+
+function talk(){
+  const first=S.turn%2,c=S.cur;
+  const cleared=[0,1].flatMap(i=>c.ms[i].map((m,k)=>c.done[i][k]?`<div class="sum"><b>${nm(i)} ・ 達成</b><span class="m">${esc(m)}（+${valOf(m)}）</span></div>`:"")).join("");
+  return `${scoreboard()}${themeCard(`<div class="who"><b>${nm(first)}</b>さんから話しはじめる</div>`)}
+  <div class="timer" id="clock">--:--</div>
+  <div class="claims">${[0,1].map(i=>`<button class="claim p${i}" data-claim="${i}" data-quiet="1"><span>${nm(i)}</span><small>言わせた！ ${cnt(c.done[i])}/2</small>${pips(c.done[i])}</button>`).join("")}</div>
+  ${cleared}
+  <div class="row"><button class="btn ghost small" data-act="peekpick">ミッション確認・変更</button><button class="btn ghost small" data-act="pause">一時停止</button></div>
+  <div class="spacer"></div>
+  <button class="giveup" data-act="giveup">ギブアップ（次のお題へ）</button>
+  ${S.limit?"":`<button class="giveup" data-act="end">ゲーム終了</button>`}`;
+}
+
+function result(){
+  const t=totals(),w=t[0]===t[1]?-1:(t[0]>t[1]?0:1);
+  const wins=i=>S.log.filter(r=>r.win===i).length;
+  const note=r=>r.win===-1?"ギブアップ":r.win===-2?"時間切れ・終了":`${nm(r.win)}さんの勝ち`;
+  return `<div class="label">最終結果 ― ${S.log.length}お題・${fmt(Math.floor(S.elapsed))}</div>
+  <div class="winner">${w<0?"引き分け":`${nm(w)}さんの勝ち`}</div>
+  <div class="final">${[0,1].map(i=>`<div class="box p${i} ${w===i?"win":""}"><div class="n">${nm(i)}</div><div class="v">${t[i]}<small style="font-size:16px">点</small></div>
+    <div class="d">ミッション達成 ${S.log.reduce((a,r)=>a+cnt(r.done[i]),0)}個<br>お題の勝ち ${wins(i)}回</div></div>`).join("")}</div>
+  ${S.log.length?`<div class="label">お題ごとの記録</div>
+  <div class="tablewrap"><table><thead><tr><th>テーマ</th><th>${nm(0)}</th><th>${nm(1)}</th></tr></thead><tbody>
+  ${S.log.map(r=>`<tr class="${r.win<0?"gu":""}"><td>${esc(r.theme)}<br><small>${note(r)}</small></td>${[0,1].map(i=>`<td>+${r.pts[i]}<br>${r.ms[i].map((m,k)=>`<small>${r.done[i][k]?"○":"×"} [${lvOf(m)}] ${esc(m)}</small>`).join("<br>")}</td>`).join("")}</tr>`).join("")}
+  </tbody></table></div>`:""}
+  <div class="spacer"></div>
+  <div class="row"><button class="btn ghost" data-act="home">設定に戻る</button><button class="btn" data-act="start">もう一回</button></div>`;
+}
+
+/* overlays (clock is paused while open) */
+const P=()=>document.getElementById("peek"),PI=()=>document.getElementById("peekInner");
+function openOverlay(html){stopClock();clearInterval(tick);PI().innerHTML=html;P().hidden=false;bindPeek()}
+function closeOverlay(){P().hidden=true;if(S.screen==="talk")runClock();render()}
+function peekPick(){
+  openOverlay(`<h2>だれが確認する？</h2><p class="lede">相手には画面を見せないでね。確認中は時間が止まります。</p>
+  <div class="row">${[0,1].map(i=>`<button class="btn ghost" data-peek="${i}">${nm(i)}</button>`).join("")}</div>
+  <button class="btn ghost small" data-pact="close">やめる</button>`);
+}
+function peekShow(i){
+  sfx("open");
+  const c=S.cur,ch=c.mChanged[i];
+  openOverlay(`<div class="label">${nm(i)}さんだけ見てね</div>
+  <div class="card deal" style="padding-block:24px"><div class="corner"><span>${nm(i)}のミッション</span><span>${cnt(c.done[i])} / 2</span></div>
+  ${c.ms[i].map((m,k)=>`<div class="mrow ${c.done[i][k]?"done":""}"><span class="num">${k+1}</span><div class="mtxt">${badge(m)}${esc(m)}${c.done[i][k]?`<em>達成</em>`:""}</div>
+    ${!c.done[i][k]&&!ch?`<button class="chg" data-pact="chgm" data-who="${i}" data-k="${k}">変える</button>`:""}</div>`).join("")}
+  <p class="hint">「相手」は${nm(1-i)}さんのこと。ミッション変更はこのお題で1回だけ（同じ難易度のものに変わる）${ch?"（使用済み）":""}。</p></div>
+  <button class="btn" data-pact="close" data-who="${i}">覚えた・閉じる</button>`);
+}
+function claimShow(i){
+  const c=S.cur,open=[0,1].filter(k=>!c.done[i][k]);
+  if(open.length===1)return claimReveal(i,open[0]);
+  sfx("swish");
+  openOverlay(`<div class="label">${nm(i)}さんだけ見てね</div><h2>どのミッションを達成した？</h2>
+  <div class="list" style="display:flex;flex-direction:column;gap:10px">${open.map(k=>`<button class="btn ghost" style="text-align:left;line-height:1.6;letter-spacing:.02em" data-pact="pickm" data-who="${i}" data-k="${k}">${badge(c.ms[i][k])}<br>${esc(c.ms[i][k])}</button>`).join("")}</div>
+  <button class="btn ghost small" data-pact="close">やめる</button>`);
+}
+function claimReveal(i,k){
+  sfx("suspense");
+  openOverlay(`<div class="label">${nm(i)}さんが「言わせた！」</div>
+  <div class="card deal" style="padding-block:24px"><div class="corner"><span>${nm(i)}さんのミッション</span><span>公開</span></div>
+  <div style="text-align:center">${badge(S.cur.ms[i][k])}</div><div class="mission-big">${esc(S.cur.ms[i][k])}</div>
+  <p class="hint" style="color:var(--ink);font-size:15px"><b>${nm(1-i)}</b>さん、本当にやった（言った）？</p></div>
+  <div class="row"><button class="btn ghost" data-pact="close" data-rej="1" data-quiet="1">やってない</button><button class="btn" data-pact="accept" data-who="${i}" data-k="${k}" data-quiet="1">認める（+${valOf(S.cur.ms[i][k])}点）</button></div>`);
+}
+function giveupShow(){
+  sfx("swish");
+  openOverlay(`<h2>ギブアップする？</h2><p class="lede">2人のミッションを公開して次のお題に進みます。ここまでの得点はそのままです。</p>
+  ${[0,1].map(i=>`<div class="sum"><b>${nm(i)}</b>${S.cur.ms[i].map((m,k)=>`<span class="m">${S.cur.done[i][k]?"○":"×"} [難易度${lvOf(m)}] ${esc(m)}</span>`).join("")}</div>`).join("")}
+  <div class="row"><button class="btn ghost" data-pact="close">続ける</button><button class="btn" data-pact="dogiveup">次のお題へ</button></div>`);
+}
+function endShow(){
+  openOverlay(`<h2>ゲームを終了する？</h2><p class="lede">ここまでに達成したミッションの点数で結果発表に進みます。</p>
+  <div class="row"><button class="btn ghost" data-pact="close">続ける</button><button class="btn" data-pact="finish">結果を見る</button></div>`);
+}
+function bindPeek(){
+  PI().querySelectorAll("[data-peek]").forEach(b=>b.onclick=()=>peekShow(+b.dataset.peek));
+  PI().querySelectorAll("[data-pact]").forEach(b=>b.onclick=()=>{
+    const a=b.dataset.pact,i=+b.dataset.who,k=+b.dataset.k,c=S.cur;
+    if(a==="chgm"){if(c.mChanged[i]||c.done[i][k])return;sfx("swish");c.ms[i][k]=drawMission(c.ms.flat(),lvOf(c.ms[i][k]));c.mChanged[i]=true;save();return peekShow(i)}
+    if(a==="pickm")return claimReveal(i,k);
+    if(a==="close"){if(b.dataset.who!==undefined&&S.screen==="missions"){c.seen[i]=true;sfx("seal")}if(b.dataset.rej)sfx("reject");return closeOverlay()}
+    if(a==="accept"){
+      c.done[i][k]=true;sfx("success");burst();
+      if(cnt(c.done[i])===2){P().hidden=true;sfx("fanfare");return endTurn(i)}
+      return closeOverlay();
+    }
+    P().hidden=true;
+    if(a==="dogiveup"){sfx("giveup");return endTurn(-1)}
+    if(a==="finish")return finish();
+  });
+}
+
+function bind(){
+  const q=s=>document.querySelectorAll("#app "+s);
+  q("#n0,#n1").forEach((el,i)=>el.oninput=()=>{S.names[i]=el.value.trim();save()});
+  q("[data-mode]").forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;render()});
+  q("[data-limit]").forEach(b=>b.onclick=()=>{S.limit=+b.dataset.limit;render()});
+  q("[data-peek]").forEach(b=>b.onclick=()=>peekShow(+b.dataset.peek));
+  q("[data-claim]").forEach(b=>b.onclick=()=>claimShow(+b.dataset.claim));
+  q("[data-act]").forEach(b=>b.onclick=()=>act(b.dataset.act));
+  q("[data-snd]").forEach(b=>b.onclick=()=>{audioInit();if(b.dataset.snd==="bgm")setBgm(S.bgmOn===false);else{setSfx(S.sfxOn===false);sfx("click")}render()});
+}
+function act(a){
+  if(a==="start")return start();
+  if(a==="peekpick")return peekPick();
+  if(a==="giveup")return giveupShow();
+  if(a==="end")return endShow();
+  if(a==="pause")return openOverlay(`<div class="toast">PAUSE</div><button class="btn" data-pact="close">再開する</button>`);
+  if(a==="chgtheme"){if(S.cur.tChanged)return;sfx("swish");S.cur.theme=drawTheme();S.cur.tChanged=true;return render()}
+  if(a==="talk"){S.screen="talk";runClock();sfx("start")}
+  else if(a==="home"){S.screen="home"}
+  render();scrollTo(0,0);
+}
+// 再読み込み時：トーク画面なら一時停止状態で復帰
+if(S.runAt){stopClock()}
+render();
+if(S.screen==="talk")act("pause");
+
+</script>
+<script>
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>

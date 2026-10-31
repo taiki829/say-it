@@ -1,14 +1,14 @@
 {
   "name": "SAY IT",
   "short_name": "SAY IT",
-  "description": "2人用の会話カードゲーム",
+  "description": "2〜6人で遊べる会話カードゲーム",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f5f5f2",
-  "theme_color": "#2b44ff",
+  "background_color": "#07060d",
+  "theme_color": "#07060d",
   "icons": [
     {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
     {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},

@@ -4,22 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>SAY IT</title>
-<meta name="description" content="2人用の会話カードゲーム">
-<meta name="theme-color" content="#f5f5f2" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<meta name="description" content="2〜6人で遊べる会話カードゲーム">
+<meta name="theme-color" content="#07060d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SAY IT">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <style>
-:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;font-size:14px;font-family:system-ui,sans-serif}
 img{max-width:100%}
 [hidden]{display:none!important}
-html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+html,body{overflow:hidden;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input{-webkit-user-select:text;user-select:text}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -211,6 +210,151 @@ label[for=n0]{color:var(--pa)}label[for=n1]{color:var(--pb)}
 .mrow .num{background:var(--sun);color:#2a2105}
 .snd button[aria-pressed=true]{border-color:var(--pa);color:var(--pa)}
 .lv1{background:var(--mint-soft);color:var(--mint)}
+/* ===== NEON: dark-only, animated aurora background. Overrides earlier tokens (specificity 0,3,0 beats the theme blocks). ===== */
+:root:root:root{
+  --bg:#07060d;--surface:rgba(22,18,40,.62);--card:#110e20;--line:rgba(255,255,255,.12);--text:#f4f2ff;--muted:#a9a4c8;
+  --accent:#b46bff;--accent-ink:#0a0612;--accent-soft:rgba(180,107,255,.16);--ok:#3dffb0;--warn:#ff5c7a;
+  --pa:#22e4ff;--pa-soft:rgba(34,228,255,.14);--pb:#ff3fd8;--pb-soft:rgba(255,63,216,.14);
+  --sun:#e8ff47;--sun-soft:rgba(232,255,71,.12);--mint:#3dffb0;--mint-soft:rgba(61,255,176,.13);
+  --dark-ink:#0a0612;color-scheme:dark}
+body{background:var(--bg)}
+body::before,body::after{content:"";position:fixed;z-index:-1;pointer-events:none}
+body::before{inset:-35%;background:
+  radial-gradient(closest-side,rgba(255,63,216,.55),transparent) 18% 22%/55% 55% no-repeat,
+  radial-gradient(closest-side,rgba(34,228,255,.5),transparent) 82% 30%/60% 60% no-repeat,
+  radial-gradient(closest-side,rgba(124,77,255,.6),transparent) 50% 78%/70% 70% no-repeat,
+  radial-gradient(closest-side,rgba(232,255,71,.22),transparent) 85% 85%/45% 45% no-repeat;
+  filter:blur(40px) saturate(1.3);animation:aurora 22s ease-in-out infinite alternate;will-change:transform}
+body::after{inset:0;background:radial-gradient(120% 80% at 50% 50%,transparent 40%,rgba(7,6,13,.75)),repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px)}
+@keyframes aurora{
+  0%{transform:translate(0,0) rotate(0deg) scale(1)}
+  33%{transform:translate(6%,-4%) rotate(40deg) scale(1.12)}
+  66%{transform:translate(-5%,5%) rotate(-25deg) scale(1.05)}
+  100%{transform:translate(3%,3%) rotate(80deg) scale(1.15)}}
+.peek{background:rgba(7,6,13,.72);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2)}
+/* glass panels */
+.card,.sum,.env,.final .box,.tablewrap,.rules,.seg,input[type=text],.btn.ghost,.score .mid{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.card{background:var(--surface)}
+.card.bubble{background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(120deg,var(--pa),var(--pb) 55%,var(--sun)) border-box;box-shadow:0 0 24px rgba(255,63,216,.25),0 0 48px rgba(34,228,255,.15)}
+.card.bubble::after{background:var(--card)}
+/* glow type */
+h1.logo{text-shadow:0 0 18px rgba(34,228,255,.6),0 0 40px rgba(34,228,255,.3)}
+.logo b{background:var(--pb);color:var(--dark-ink);text-shadow:none;box-shadow:0 0 18px rgba(255,63,216,.7)}
+h1.logo b{box-shadow:5px 5px 0 var(--sun),0 0 24px rgba(255,63,216,.7)}
+.eyebrow{color:var(--pa);text-shadow:0 0 10px rgba(34,228,255,.6)}
+.card .theme{text-shadow:0 0 18px rgba(255,255,255,.25)}
+.score .p:first-child .v{text-shadow:0 0 14px rgba(34,228,255,.7)}
+.score .p:last-child .v{text-shadow:0 0 14px rgba(255,63,216,.7)}
+.score .mid{background:var(--surface);border:1px solid var(--line)}
+.timer{filter:drop-shadow(0 0 12px rgba(255,63,216,.45))}
+/* controls: bright neon fills need dark ink */
+.btn{background:linear-gradient(90deg,var(--pa),var(--pb));color:var(--dark-ink);box-shadow:0 0 22px rgba(255,63,216,.45),0 4px 0 var(--sun)}
+.btn:active:not(:disabled){box-shadow:0 0 22px rgba(255,63,216,.45),0 1px 0 var(--sun)}
+.btn.ghost{background:var(--surface);color:var(--text);border:1px solid var(--line);box-shadow:none}
+.seg{background:var(--surface)}
+.seg button[aria-pressed=true]{background:var(--pa);color:var(--dark-ink);box-shadow:0 0 16px rgba(34,228,255,.55)}
+.seg button[data-mode="date"][aria-pressed=true]{background:var(--pb);box-shadow:0 0 16px rgba(255,63,216,.55)}
+.seg button[data-mode="drink"][aria-pressed=true]{background:var(--sun);color:var(--dark-ink);box-shadow:0 0 16px rgba(232,255,71,.5)}
+.seg button[data-mode="all"][aria-pressed=true]{background:var(--mint);color:var(--dark-ink);box-shadow:0 0 16px rgba(61,255,176,.5)}
+.claim.p0{background:var(--pa);color:var(--dark-ink);box-shadow:0 0 22px rgba(34,228,255,.55),0 4px 0 var(--sun)}
+.claim.p1{background:var(--pb);color:var(--dark-ink);box-shadow:0 0 22px rgba(255,63,216,.55),0 4px 0 var(--sun)}
+.env.p0.seen{box-shadow:0 0 18px rgba(34,228,255,.4)}.env.p1.seen{box-shadow:0 0 18px rgba(255,63,216,.4)}
+.env.p0.seen .wax,.env.p1.seen .wax{color:var(--dark-ink)}
+.final .box.p0.win{background:var(--pa);color:var(--dark-ink);box-shadow:0 0 30px rgba(34,228,255,.6),5px 5px 0 var(--sun)}
+.final .box.p1.win{background:var(--pb);color:var(--dark-ink);box-shadow:0 0 30px rgba(255,63,216,.6),5px 5px 0 var(--sun)}
+.tag{background:var(--sun);color:var(--dark-ink);box-shadow:0 0 10px rgba(232,255,71,.5)}
+.mrow .num{background:var(--sun);color:var(--dark-ink)}
+.winner{text-shadow:0 0 20px rgba(255,63,216,.6)}
+.lv{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:6px;letter-spacing:.04em;border:1px solid currentColor}
+.lvlo{color:var(--mint);background:var(--mint-soft);box-shadow:0 0 10px rgba(61,255,176,.3)}
+.lvhi{color:var(--pb);background:var(--pb-soft);box-shadow:0 0 10px rgba(255,63,216,.35)}
+.mrow .mtxt .lv{display:table}
+.claim .pips{display:flex;justify-content:center;white-space:normal}
+.pips i{color:inherit}
+/* multiplayer: each player carries --pc (its neon color) */
+.board{display:flex;flex-direction:column;gap:10px}
+.turnpill{align-self:center;font-family:var(--display);font-weight:700;font-size:12px;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.chips{display:grid;gap:8px}
+.chip{display:flex;justify-content:space-between;align-items:baseline;gap:6px;min-width:0;background:var(--surface);border:1px solid var(--line);border-top:2px solid var(--pc);border-radius:12px;padding:7px 10px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.chip .n{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.chip .v{font-family:var(--display);font-weight:800;font-size:24px;line-height:1;color:var(--pc);text-shadow:0 0 12px var(--pc);font-variant-numeric:tabular-nums}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pl-label{color:var(--pc)!important}
+.pl-input{border-color:var(--pc)!important}
+.env.pl .wax{background:color-mix(in srgb,var(--pc) 16%,transparent);color:var(--pc)}
+.env.pl.seen{border-color:var(--pc);box-shadow:0 0 16px color-mix(in srgb,var(--pc) 45%,transparent)}
+.env.pl.seen .wax{background:var(--pc);color:var(--dark-ink)}
+.claim.pl{background:var(--pc);color:var(--dark-ink);box-shadow:0 0 20px color-mix(in srgb,var(--pc) 55%,transparent),0 4px 0 rgba(255,255,255,.18)}
+.claim.pl:active{transform:translateY(3px)}
+.pickgrid{display:grid;gap:10px}
+.pl-btn{border-color:var(--pc)!important;color:var(--pc)!important}
+.ranks{display:flex;flex-direction:column;gap:8px}
+.rk{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--pc);border-radius:14px;padding:12px 14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.rk.win{background:color-mix(in srgb,var(--pc) 20%,var(--card));box-shadow:0 0 22px color-mix(in srgb,var(--pc) 45%,transparent)}
+.rk .pos{font-family:var(--display);font-weight:800;font-size:20px;width:26px;text-align:center;color:var(--muted)}
+.rk.win .pos{color:var(--pc)}
+.rk .who2{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.rk .who2 b{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rk .who2 small{font-size:11px;color:var(--muted)}
+.rk .pt{font-family:var(--display);font-weight:800;font-size:34px;color:var(--pc);text-shadow:0 0 14px var(--pc);font-variant-numeric:tabular-nums}
+.rk .pt small{font-size:13px;margin-left:2px}
+.logs{display:flex;flex-direction:column;gap:8px}
+.lg{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.lg.gu{opacity:.7}
+.lg-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.lg-h b{font-weight:900;font-size:14px;min-width:0}
+.lg-h small{font-size:11px;color:var(--muted);white-space:nowrap}
+.lg-p{display:grid;grid-template-columns:88px 1fr;gap:8px;font-size:12px;border-top:1px solid var(--line);padding-top:7px}
+.lg-n{color:var(--pc);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg-n em{font-style:normal;color:var(--text)}
+.lg-m{color:var(--muted);line-height:1.6;min-width:0}
+.sum[style*="--pc"]{border-left:4px solid var(--pc)}
+/* ===== one-screen fit: every screen sized to the viewport; .t1–.t3 tighten progressively (set by fit()) ===== */
+.app{height:100%;min-height:0;overflow-y:auto;padding-block:max(8px,1.2vh) max(10px,1.6vh)}
+.screen{gap:clamp(8px,1.7vh,20px);min-height:0}
+.topbar{padding-bottom:0}
+h1.logo{font-size:clamp(46px,8.5vh,76px);margin-top:4px}
+.lede{font-size:14px;line-height:1.7}
+.card{padding:clamp(14px,2.2vh,22px)}
+.card .theme{font-size:clamp(24px,4vh,34px);margin:clamp(6px,1.4vh,18px) 0}
+.bubble{margin-bottom:8px}
+.timer{font-size:clamp(36px,6.4vh,56px)}
+.env{padding:clamp(10px,1.6vh,18px) 8px;gap:6px}
+.wax{width:clamp(34px,5vh,46px);height:clamp(34px,5vh,46px);font-size:18px}
+.claim{padding:clamp(10px,1.6vh,16px) 6px clamp(8px,1.2vh,12px)}
+.btn{padding:clamp(12px,2vh,17px)}
+.btn.small{padding:clamp(9px,1.4vh,12px) 10px}
+.seg button{padding:clamp(7px,1.3vh,11px) 4px}
+input[type=text]{padding:clamp(8px,1.3vh,13px) 12px;font-size:16px}
+.field{gap:6px}
+.names{display:grid;gap:8px}
+.giveup{padding:6px 4px}
+.rk{padding:clamp(8px,1.3vh,12px) 14px}
+.rk .pt{font-size:clamp(24px,4vh,34px)}
+.winner{font-size:clamp(24px,4vh,32px);margin:0}
+.rulesbox ol{margin:0;padding-left:20px;line-height:1.85;color:var(--muted);font-size:14px}
+.rulesbox li::marker{color:var(--pb);font-weight:700}
+.app.t1 .eyebrow,.app.t1 .lede{display:none}
+.app.t1 .screen{gap:8px}
+.app.t1 .seg small{display:none}
+.app.t1 .card .who{padding-top:8px;font-size:12px}
+.app.t1 .chip{padding:5px 9px}.app.t1 .chip .v{font-size:20px}
+.app.t2 h1.logo{font-size:40px}
+.app.t2 .card .theme{font-size:22px;margin:4px 0}
+.app.t2 .card{gap:8px;padding:12px 14px}
+.app.t2 .env small,.app.t2 .claim .pips{display:none}
+.app.t2 .wax{width:30px;height:30px;font-size:15px}
+.app.t2 .timer{font-size:32px}
+.app.t2 .btn{padding:11px}
+.app.t2 .label{font-size:11px}
+.app.t2 .rk .who2 small{display:none}
+.app.t3 .card .who,.app.t3 .ornament{display:none}
+.app.t3 .chg{padding:3px 10px;font-size:11px}
+.app.t3 .chip .n{font-size:11px}.app.t3 .chip .v{font-size:17px}
+.app.t3 .claim{font-size:14px;padding:8px 4px}
+.app.t3 .env{padding:8px 6px}
+.app.t3 .turnpill{display:none}
+@media (prefers-reduced-motion:reduce){body::before{animation:none}}
 </style>
 </head>
 <body>
@@ -221,9 +365,9 @@ label[for=n0]{color:var(--pa)}label[for=n1]{color:var(--pb)}
 const DATA={"T": {"all": ["好きな食べ物", "休日の過ごし方", "子どもの頃の夢", "最近ハマっていること", "旅行", "地元", "学生時代", "音楽", "映画・ドラマ", "朝の習慣", "コンビニ", "季節", "動物", "お金の使い方", "宝くじが当たったら", "特技", "苦手なもの", "失敗談", "人生で一番笑ったこと", "尊敬する人", "10年後の自分", "タイムマシン", "生まれ変わったら", "無人島に持っていくもの", "最後の晩餐", "理想の家", "スマホの中身", "SNS", "ゲーム", "スポーツ", "雨の日", "料理", "カフェ", "ファッション", "買い物", "睡眠", "夢の話", "怖い話", "マイルール", "今年の目標", "ストレス解消", "性格", "占い", "家族", "ペット", "仕事・バイト", "推し", "漫画・本", "透明人間になったら", "最近うれしかったこと"], "friend": ["学校の先生", "黒歴史", "修学旅行", "親友", "あだ名", "部屋の片付け", "おこづかい", "変なお客さん", "ラーメン", "深夜のノリ", "モテ期", "地元あるある", "運動会", "罰ゲーム", "グループでの役割", "ドッキリ", "卒業", "ゲームセンター", "寝坊", "次に遊ぶなら", "カラオケ", "文化祭", "テスト前の過ごし方", "給食", "放課後", "部活", "合宿", "バイト先の人間関係", "ルームシェアするなら", "2人の思い出", "最近見たおもしろ動画", "行ってみたいテーマパーク", "2人で起業するなら", "共通の知り合い", "昔流行ったもの", "子どもの頃の遊び", "夏休みの思い出", "人に言えない趣味", "ハマった食べ物ブーム", "友達との旅行", "自分の取扱説明書", "サークル", "誕生日の過ごし方", "ファミレス", "オールした日", "人生の分岐点", "最近の買ってよかったもの", "苦手な人のタイプ", "昔の自分にひと言", "くだらない喧嘩"], "date": ["理想のデート", "好きなタイプ", "初恋", "ドキッとする仕草", "記念日", "連絡の頻度", "一目惚れ", "褒め言葉", "手料理", "サプライズ", "甘え方", "一緒に住むなら", "ケンカと仲直り", "恋愛の失敗", "今日の服", "次のデート", "告白", "ヤキモチ", "夜景・星空", "2人の共通点", "第一印象", "デートの服選び", "プレゼント", "遠距離恋愛", "結婚観", "恋愛映画", "理想の休日を2人で", "デートの割り勘", "恋人の呼び方", "デートでの食事", "ペアグッズ", "旅行デート", "雨の日デート", "恋愛ソング", "モテる人の特徴", "好きな香り", "待ち合わせ", "恋人とやりたいこと", "もし付き合ったら", "印象が変わった瞬間", "ギャップ", "手をつなぐタイミング", "記念写真", "恋愛相談", "理想のプロポーズ", "束縛", "休日の朝", "恋人の友達", "クリスマスの過ごし方", "今日一番楽しかったこと"], "drink": ["好きなお酒", "酔うとどうなる", "お酒の失敗談", "締めの一品", "最強のおつまみ", "居酒屋の注文", "乾杯の挨拶", "二次会", "終電", "はしご酒", "宅飲み", "飲み会での役割", "上司・先輩の話", "新歓の思い出", "ノンアルの楽しみ方", "お酒の強さ", "二日酔い対策", "飲み会ゲーム", "ここだけの話", "恋バナ", "最近の愚痴", "褒め合いタイム", "職場・学校のあるある", "理想の上司", "人生で一番飲んだ日", "行きつけの店", "焼き鳥はタレか塩か", "最初の一杯", "飲み会での名言", "カラオケの選曲", "酔って言われたひと言", "記憶がない夜", "もし店を開くなら", "今年一番の事件", "本音で話すと", "言えなかったひと言", "人生相談", "好きなチェーン店", "飲み会でモテる人", "酔ったときの癖", "給料日の過ごし方", "理想の飲み友達", "朝まで語りたいこと", "地元の居酒屋", "お酒と料理の組み合わせ", "飲み放題の元の取り方", "今乾杯したいこと", "来年やりたいこと", "学生時代の飲み会", "酒豪伝説"]}, "M": {"all": ["1|相手に食べ物の名前を言わせる", "1|相手に動物の名前を言わせる", "1|相手に色の名前を言わせる", "1|相手に地名（国・都市・駅など）を言わせる", "1|相手に数字を言わせる", "1|相手に人の名前を言わせる", "1|相手に季節に関係する言葉を言わせる", "1|相手に乗り物の名前を言わせる", "1|相手に飲み物の名前を言わせる", "1|相手にお店の名前を言わせる", "1|相手に驚いたリアクションをさせる", "1|相手に共感の言葉を言わせる（わかる・たしかに など）", "1|相手を笑わせる", "1|相手から質問させる", "1|相手に好きなものを1つ言わせる", "1|相手に嫌いなもの・苦手なものを言わせる", "1|相手に過去の思い出を話させる", "1|相手にこれからの予定を言わせる", "1|相手に家族の誰かの話をさせる", "1|相手に友達の話をさせる", "1|相手に子どもの頃の話をさせる", "1|相手に最近あった出来事を話させる", "1|相手に自分のことを褒めさせる", "1|相手に何かをおすすめさせる", "1|相手に感謝の言葉を言わせる", "1|相手に行きたい場所を言わせる", "1|相手にやってみたいことを言わせる", "1|相手にほしいものを言わせる", "1|相手に体の部位の名前を言わせる", "1|相手に曜日か日付を言わせる", "1|相手に時刻（何時など）を言わせる", "1|相手に天気に関する言葉を言わせる", "1|相手にお金に関する話をさせる", "1|相手に趣味の話をさせる", "1|相手に仕事か学校の話をさせる", "1|相手に食べたいものを言わせる", "1|相手に音楽や曲の話をさせる", "1|相手に映画・ドラマ・アニメのタイトルを言わせる", "1|相手に有名人の名前を言わせる", "1|相手にスポーツの名前を言わせる", "1|相手に疑問形で返させる（〜なの？ など）", "1|相手に否定させる（いや・違う など）", "1|相手に賛成させる（いいね・そうだね など）", "1|相手にジェスチャーをさせる", "1|相手に3回うなずかせる", "1|相手に考え込ませる（うーん・えーと など）", "1|相手にカタカナ語を言わせる", "1|相手に擬音語を言わせる（ドキドキ・ワクワク など）", "1|相手に感想を言わせる（おいしい・楽しい など）", "1|相手に失敗談を話させる", "1|相手に自慢話をさせる", "1|相手に悩みや困っていることを話させる", "1|相手に自分の性格について話させる", "1|相手に住んでいる場所の話をさせる", "1|相手に休日の過ごし方を話させる", "1|相手に「〜したことある？」と聞かせる", "1|相手に比べる言葉を言わせる（〜より・〜の方が など）", "1|相手に程度を表す言葉を言わせる（すごく・ちょっと など）", "1|相手にスマホやアプリの話をさせる", "1|相手に家の中にある物の名前を言わせる", "1|相手に服や持ち物の話をさせる", "1|相手に理由を説明させる（〜だから など）", "1|相手に謝らせる（ごめん・すみません など）", "1|相手に「AとBどっち？」で選ばせる", "1|相手に将来の夢を話させる", "1|相手にあいさつの言葉を言わせる（おはよう・お疲れ など）", "1|相手に楽しかったことを話させる", "1|相手に昔ハマっていたものを話させる", "1|相手に誰かの名前を呼ばせる", "1|相手に「好き」か「嫌い」と言わせる", "2|相手に「たしかに」と言わせる", "2|相手に「なるほど」と言わせる", "2|相手に「わかる」と言わせる", "2|相手に「すごい」と言わせる", "2|相手に「やばい」と言わせる", "2|相手に「まじで？」と言わせる", "2|相手に「なんで？」と言わせる", "2|相手に「いいね」と言わせる", "2|相手に「ありがとう」と言わせる", "2|相手に「懐かしい」と言わせる", "2|相手に「おいしそう」と言わせる", "2|相手に「行ってみたい」と言わせる", "2|相手に「えー！」と言わせる", "2|相手に「知らなかった」と言わせる", "2|相手に「ちょっと待って」と言わせる", "2|相手に「それで？」と聞かせる", "2|相手に「うらやましい」と言わせる", "2|相手に「おもしろい」と言わせる", "2|相手に「かわいい」と言わせる", "2|相手に「かっこいい」と言わせる", "2|相手に「最高」と言わせる", "2|相手に「無理」と言わせる", "2|相手に「お腹すいた」と言わせる", "2|相手に「疲れた」と言わせる", "2|相手に「眠い」と言わせる", "2|相手に「暑い」か「寒い」と言わせる", "2|相手に食べ物の名前を3つ言わせる", "2|相手に動物の名前を2つ言わせる", "2|相手に国の名前を言わせる", "2|相手に芸能人の名前を2人言わせる", "2|相手に歌をワンフレーズ歌わせる", "2|相手に誰かのモノマネをさせる", "2|相手にスマホの写真を見せてもらう", "2|相手に何かを約束させる", "2|相手に自分のあだ名を考えさせる", "2|相手に30秒以上話し続けさせる", "2|相手に誕生日を言わせる", "2|相手に出身地を言わせる", "2|相手にクイズを出させる", "2|相手に自分の意見に反対させる", "2|相手に方言を言わせる", "2|相手にため息をつかせる", "2|相手に手を叩かせる", "2|相手に指で数を数えさせる", "2|相手を2回笑わせる", "3|相手に「めっちゃ」と言わせる", "3|相手に「ラーメン」と言わせる", "3|相手に「猫」と言わせる", "3|相手に「宇宙」と言わせる", "3|相手に「恐竜」と言わせる", "3|相手に「冷蔵庫」と言わせる", "3|相手に「富士山」と言わせる", "3|相手に「新幹線」と言わせる", "3|相手に「パンダ」と言わせる", "3|相手に「誕生日」と言わせる", "3|相手に「魔法」と言わせる", "3|相手に「忍者」と言わせる", "3|相手に「天才」と言わせる", "3|相手に「さすが」と言わせる", "3|相手に「ずるい」と言わせる", "3|相手に「もったいない」と言わせる", "3|相手に「ちなみに」と言わせる", "3|相手に「逆に」と言わせる", "3|相手に「なんだかんだ」と言わせる", "3|相手に「一応」と言わせる", "3|相手に「結局」と言わせる", "3|相手に「100」と言わせる", "3|相手に「赤」と言わせる", "3|相手に「なんか」を3回言わせる", "3|相手に同じ言葉を2回くり返させる（いやいや など）"], "friend": ["1|相手に学生時代の思い出を話させる", "1|相手に共通の知り合いの名前を言わせる", "1|相手に「今度〇〇しよう」と誘わせる", "1|相手にツッコませる", "1|相手にハマっていたゲームや漫画の話をさせる", "1|相手に恥ずかしい話をさせる", "1|相手に遊びの予定を立てさせる", "1|相手に地元の話をさせる", "1|相手にボケさせる", "1|相手に笑いながら否定させる", "2|相手に「それな」と言わせる", "2|相手に「ウケる」と言わせる", "2|相手に「やめて」と言わせる", "2|相手に変顔をさせる", "2|相手とハイタッチする", "2|相手に昔のあだ名を言わせる", "3|相手に「エモい」と言わせる", "3|相手に「親友」と言わせる", "3|相手に「おごって」と言わせる", "3|相手に「じゃんけん」と言わせる"], "date": ["1|相手に好きなタイプの話をさせる", "1|相手に行きたいデートの場所を言わせる", "1|相手に自分の見た目について何か言わせる", "1|相手に恋愛の思い出を話させる", "1|相手を照れさせる", "1|相手に次に会う話をさせる", "1|相手に好きな仕草や雰囲気を話させる", "1|相手に褒め言葉を言わせる", "1|相手に理想の休日を話させる", "1|相手に自分の第一印象を言わせる", "2|相手に「楽しい」と言わせる", "2|相手に「うれしい」と言わせる", "2|相手に「優しい」と言わせる", "2|相手に「似合う」と言わせる", "2|相手に「一緒に行こう」と言わせる", "2|相手と5秒目を合わせる", "3|相手に「ドキッとした」と言わせる", "3|相手に「また会いたい」と言わせる", "3|相手に「付き合ったら」と言わせる", "3|相手に「素敵」と言わせる"], "drink": ["1|相手にお酒の名前を言わせる", "1|相手におつまみの名前を言わせる", "1|相手に酔ったときの話をさせる", "1|相手に愚痴を言わせる", "1|相手に本音を話させる", "1|相手に飲み物を注文させる（おかわりもOK）", "1|相手に何か飲ませる", "1|相手に飲み会の思い出を話させる", "1|相手に明日の予定を言わせる", "1|相手に行きつけのお店の話をさせる", "2|相手に「乾杯」と言わせる", "2|相手に「おいしい」と言わせる", "2|相手に「もう一杯」と言わせる", "2|相手に「酔ってきた」と言わせる", "2|相手に「ここだけの話」と言わせる", "2|相手にグラスを持ち上げさせる", "3|相手に「二日酔い」と言わせる", "3|相手に「終電」と言わせる", "3|相手に「しらふ」と言わせる", "3|相手に「記憶ない」と言わせる"]}};
 const MODES={friend:"友達",date:"デート",drink:"飲み会",all:"全て"};
 const TH=[],MS=[];
-for(const k of ["all","friend","date","drink"]){DATA.T[k].forEach(t=>TH.push({id:TH.length+1,kind:k,t}));DATA.M[k].forEach(x=>{const n=x.indexOf("|");MS.push({kind:k,lv:+x.slice(0,n),m:x.slice(n+1)})})}
-const LV={};MS.forEach(x=>LV[x.m]=x.lv);const lvOf=m=>LV[m]||1,valOf=m=>lvOf(m)===3?2:1;
-const badge=m=>`<span class="lv lv${lvOf(m)}">難易度${lvOf(m)}${lvOf(m)===3?" ・ 2pt":" ・ 1pt"}</span>`;
+for(const k of ["all","friend","date","drink"]){DATA.T[k].forEach(t=>TH.push({id:TH.length+1,kind:k,t}));DATA.M[k].forEach(x=>{const n=x.indexOf("|");MS.push({kind:k,lv:+x.slice(0,n)>1?2:1,m:x.slice(n+1)})})}
+const LV={};MS.forEach(x=>LV[x.m]=x.lv);const lvOf=m=>LV[m]||1,valOf=m=>1,LVN=["","低","高"];
+const badge=m=>`<span class="lv ${lvOf(m)===2?"lvhi":"lvlo"}">難易度 ${LVN[lvOf(m)]}</span>`;
 const inMode=k=>k==="all"||S.mode==="all"||k===S.mode;
 
 /* ===== Sound: all synthesized with Web Audio (no files) ===== */
@@ -322,24 +466,28 @@ document.addEventListener("visibilitychange",()=>{if(!AU.ctx)return;if(document.
 function burst(){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   const cv=document.createElement("canvas");cv.className="burst";document.body.appendChild(cv);
-  const cs=getComputedStyle(document.documentElement),COLS=["--pa","--pb","--sun","--mint"].map((v,k)=>cs.getPropertyValue(v).trim()||["#2b44ff","#ff4f8b","#ffc93c","#22b892"][k]);const dpr=devicePixelRatio||1,W=cv.width=innerWidth*dpr,H=cv.height=innerHeight*dpr,x=cv.getContext("2d");
+  const cs=getComputedStyle(document.documentElement),COLS=["#22e4ff","#ff3fd8","#e8ff47","#3dffb0","#b46bff"];const dpr=devicePixelRatio||1,W=cv.width=innerWidth*dpr,H=cv.height=innerHeight*dpr,x=cv.getContext("2d");
   const ps=Array.from({length:90},()=>({x:W/2,y:H*.42,vx:(Math.random()-.5)*14*dpr,vy:(Math.random()-.9)*12*dpr,r:(1+Math.random()*2.6)*dpr,l:1,c:COLS[Math.floor(Math.random()*COLS.length)]}));
   let f=0;(function draw(){x.clearRect(0,0,W,H);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.32*dpr;p.vx*=.985;p.l-=.012;x.globalAlpha=Math.max(0,p.l);x.fillStyle=p.c;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});
   if(++f<90)requestAnimationFrame(draw);else cv.remove()})();
 }
 
-const KEY="say-it-v1";
+const KEY="say-it-v2";
+const PCOL=["#22e4ff","#ff3fd8","#e8ff47","#3dffb0","#b46bff","#ff9a3d"];
+const pc=i=>`--pc:${PCOL[i%6]}`;
 let S=load()||fresh();
-function fresh(){return {screen:"home",names:["",""],mode:"friend",limit:300,turn:0,usedT:[],usedM:[],cur:null,log:[],left:300,elapsed:0,runAt:null,flash:null,sfxOn:true,bgmOn:true}}
+function fresh(){return {screen:"home",n:2,names:["","","","","",""],mode:"friend",limit:300,turns:10,tEl:0,turn:0,usedT:[],usedM:[],cur:null,log:[],left:300,elapsed:0,runAt:null,flash:null,sfxOn:true,bgmOn:true}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function load(){try{const v=localStorage.getItem(KEY);const o=v?JSON.parse(v):null;return o&&o.screen?o:null}catch(e){return null}}
+function load(){try{const v=localStorage.getItem(KEY);const o=v?JSON.parse(v):null;return o&&o.screen&&o.n?o:null}catch(e){return null}}
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const nm=i=>esc(S.names[i]||(i?"プレイヤーB":"プレイヤーA"));
+const nm=i=>esc(S.names[i]||`プレイヤー${i+1}`);
+const P_=()=>[...Array(S.n).keys()];
 const cnt=d=>d.filter(Boolean).length;
 const ptsOf=(ms,d)=>ms.reduce((a,m,k)=>a+(d[k]?valOf(m):0),0);
+const cols=()=>S.n<=4?2:3;
 // 得点＝達成したミッションの数（1つ1点）。今のお題で達成した分も含める
-function totals(){const t=S.log.reduce((t,r)=>[t[0]+r.pts[0],t[1]+r.pts[1]],[0,0]);if(S.cur&&S.screen!=="result"&&S.screen!=="home"){t[0]+=ptsOf(S.cur.ms[0],S.cur.done[0]);t[1]+=ptsOf(S.cur.ms[1],S.cur.done[1])}return t}
+function totals(){const t=P_().map(()=>0);S.log.forEach(r=>r.pts.forEach((p,i)=>t[i]+=p));if(S.cur&&S.screen!=="result"&&S.screen!=="home")P_().forEach(i=>t[i]+=ptsOf(S.cur.ms[i],S.cur.done[i]));return t}
 const fmt=s=>{const a=Math.max(0,Math.abs(s));return Math.floor(a/60)+":"+String(a%60).padStart(2,"0")};
 
 function drawTheme(){let p=TH.filter(x=>inMode(x.kind)&&!S.usedT.includes(x.id));if(!p.length){S.usedT=[];p=TH.filter(x=>inMode(x.kind))}const t=pick(p);S.usedT.push(t.id);return t}
@@ -349,31 +497,36 @@ function drawMission(excl,lv){const base=MS.filter(x=>inMode(x.kind)&&x.lv===lv)
 /* clock: runs only on the talk screen while no overlay is open */
 function now(){return Date.now()}
 function runClock(){if(!S.runAt)S.runAt=now()}
-function stopClock(){if(S.runAt){const d=(now()-S.runAt)/1000;S.elapsed+=d;if(S.limit)S.left-=d;S.runAt=null}}
-function liveLeft(){const d=S.runAt?(now()-S.runAt)/1000:0;return S.limit?Math.ceil(S.left-d):Math.floor(S.elapsed+d)}
+function stopClock(){if(S.runAt){const d=(now()-S.runAt)/1000;S.elapsed+=d;S.tEl=(S.tEl||0)+d;if(S.limit)S.left-=d;S.runAt=null}}
+function liveLeft(){const d=S.runAt?(now()-S.runAt)/1000:0;return S.limit?Math.ceil(S.left-d):Math.floor((S.tEl||0)+d)}
 
 function start(){audioInit();sfx("start");bgmStart();S.turn=0;S.log=[];S.usedT=[];S.usedM=[];S.left=S.limit;S.elapsed=0;S.runAt=null;S.flash=null;newTurn();S.screen="missions";render()}
 function newTurn(){
-  // 2人とも「難易度3を1つ＋難易度1か2を1つ」。2つ目の難易度は2人で同じにして毎回公平にする
-  const second=Math.random()<.55?1:2,all=[];
-  for(let p=0;p<2;p++){all.push(drawMission(all,3));all.push(drawMission(all,second))}
-  for(const o of [0,2])if(Math.random()<.5)[all[o],all[o+1]]=[all[o+1],all[o]];
-  S.cur={theme:drawTheme(),ms:[[all[0],all[1]],[all[2],all[3]]],done:[[false,false],[false,false]],seen:[false,false],tChanged:false,mChanged:[false,false]};
+  S.left=S.limit;S.tEl=0; // 制限時間は1お題ごと
+  // 全員が毎回「難易度 高 を1つ＋難易度 低 を1つ」で公平。全員のミッションは重複なし
+  const all=[],ms=[];
+  P_().forEach(()=>{const hi=drawMission(all,2);all.push(hi);const lo=drawMission(all,1);all.push(lo);ms.push(Math.random()<.5?[hi,lo]:[lo,hi])});
+  S.cur={theme:drawTheme(),ms,done:P_().map(()=>[false,false]),seen:P_().map(()=>false),tChanged:false,mChanged:P_().map(()=>false)};
 }
-function logTurn(win){const c=S.cur;S.log.push({theme:c.theme.t,ms:c.ms.map(x=>x.slice()),done:c.done.map(x=>x.slice()),pts:[ptsOf(c.ms[0],c.done[0]),ptsOf(c.ms[1],c.done[1])],win})}
+function logTurn(win){const c=S.cur;S.log.push({theme:c.theme.t,ms:c.ms.map(x=>x.slice()),done:c.done.map(x=>x.slice()),pts:P_().map(i=>ptsOf(c.ms[i],c.done[i])),win})}
 function endTurn(win){
   stopClock();logTurn(win);
-  S.flash={win,pts:S.log[S.log.length-1].pts};S.turn++;newTurn();S.screen="missions";render();scrollTo(0,0);
+  S.flash={win,pts:S.log[S.log.length-1].pts};S.turn++;
+  if(S.turns&&S.turn>=S.turns){S.cur=null;if(win<0)sfx("fanfare");S.screen="result";render();scrollTo(0,0);return}
+  newTurn();S.screen="missions";render();scrollTo(0,0);
 }
-function finish(){stopClock();if(S.cur&&(S.screen==="talk"||cnt(S.cur.done[0])+cnt(S.cur.done[1])>0))logTurn(-2);S.cur=null;sfx("fanfare");S.screen="result";render();scrollTo(0,0)}
+function finish(){stopClock();if(S.cur&&(S.screen==="talk"||S.cur.done.some(d=>cnt(d))))logTurn(-2);S.cur=null;sfx("fanfare");S.screen="result";render();scrollTo(0,0)}
 
 let tick=null;
 function render(){
   save();clearInterval(tick);
   document.getElementById("app").innerHTML=`<div class="screen">${topbar()}${({home,missions,talk,result})[S.screen]()}</div>`;
-  bind();
+  bind();fit();
   if(S.screen==="talk"){tick=setInterval(onTick,250);onTick()}
 }
+// 1画面に収める：はみ出したら段階的に詰める
+function fit(){const app=document.getElementById("app");if(!app||!app.classList)return;app.classList.remove("t1","t2","t3");for(const c of ["t1","t2","t3"]){if(app.scrollHeight<=app.clientHeight+1)break;app.classList.add(c)}}
+addEventListener("resize",()=>fit());
 function onTick(){
   const el=document.getElementById("clock");if(!el)return;
   const v=liveLeft();
@@ -384,8 +537,8 @@ function onTick(){
 }
 function timeUp(){
   clearInterval(tick);sfx("timeup");
-  PI().innerHTML=`<div class="toast">TIME UP</div><p class="lede" style="text-align:center">ここまでに達成したミッションの点数で決着です。</p>
-  <button class="btn" data-pact="finish">結果を見る</button>`;P().hidden=false;bindPeek();
+  PI().innerHTML=`<div class="toast">TIME UP</div><p class="lede" style="text-align:center">このお題は時間切れ。ここまでに達成した点数はそのまま残ります。</p>
+  <button class="btn" data-pact="timeupnext">${S.turns&&S.turn+1>=S.turns?"結果を見る":"次のお題へ"}</button>`;P().hidden=false;bindPeek();
 }
 
 function topbar(){
@@ -395,10 +548,8 @@ function topbar(){
 }
 function scoreboard(){
   const t=totals();
-  const clock=S.limit?`残り ${fmt(S.screen==="talk"?liveLeft():Math.ceil(S.left))}`:`経過 ${fmt(S.screen==="talk"?liveLeft():Math.floor(S.elapsed))}`;
-  return `<div class="score"><div class="p"><span class="n">${nm(0)}</span><span class="v">${t[0]}</span></div>
-  <div class="mid">お題 ${S.turn+1}<br>${clock}</div>
-  <div class="p"><span class="n">${nm(1)}</span><span class="v">${t[1]}</span></div></div>`;
+  return `<div class="board"><div class="turnpill">お題 ${S.turn+1}${S.turns?` / ${S.turns}`:""}</div>
+  <div class="chips" style="grid-template-columns:repeat(${Math.min(S.n,3)},1fr)">${P_().map(i=>`<div class="chip" style="${pc(i)}"><span class="n">${nm(i)}</span><span class="v">${t[i]}</span></div>`).join("")}</div></div>`;
 }
 function themeCard(extra=""){
   const c=S.cur.theme;
@@ -410,68 +561,60 @@ const pips=d=>`<span class="pips">${d.map(x=>`<i class="${x?"on":""}"></i>`).joi
 
 function home(){
   const seg=(attr,val,list)=>list.map(([v,l,s])=>`<button data-${attr}="${v}" aria-pressed="${val===v}">${l}${s?`<small>${s}</small>`:""}</button>`).join("");
-  return `<div><div class="eyebrow">A conversation game for two</div><h1 class="logo">SAY <b>IT</b></h1></div>
-  <p class="lede">ひとりに2つずつ、秘密のミッション。テーマについて話しながら、さりげなく相手に言わせたら勝ち。</p>
-  <div class="row">
-    <div class="field"><label class="label" for="n0">プレイヤーA</label><input type="text" id="n0" maxlength="10" placeholder="なまえ" value="${esc(S.names[0])}"></div>
-    <div class="field"><label class="label" for="n1">プレイヤーB</label><input type="text" id="n1" maxlength="10" placeholder="なまえ" value="${esc(S.names[1])}"></div>
-  </div>
-  <div class="rule">.</div>
+  return `<div><div class="eyebrow">A conversation game ・ 2–6 players</div><h1 class="logo">SAY <b>IT</b></h1></div>
+  <p class="lede">ひとり2つの秘密ミッション。話しながら、さりげなく誰かに言わせたら得点。</p>
+  <div class="field"><span class="label">人数</span><div class="seg" style="grid-template-columns:repeat(5,1fr)">
+    ${seg("n",S.n,[2,3,4,5,6].map(v=>[v,v,"人"]))}</div></div>
+  <div class="names" style="grid-template-columns:repeat(${S.n<=2?2:3},1fr)">${P_().map(i=>`<div class="field" style="${pc(i)}"><label class="label pl-label" for="n${i}">プレイヤー${i+1}</label><input type="text" class="pl-input" id="n${i}" data-name="${i}" maxlength="10" placeholder="なまえ" value="${esc(S.names[i])}"></div>`).join("")}</div>
   <div class="field"><span class="label">モード</span><div class="seg" style="grid-template-columns:1fr 1fr">
     ${seg("mode",S.mode,[["friend","友達","テーマ100・ミッション160"],["date","デート","テーマ100・ミッション160"],["drink","飲み会","テーマ100・ミッション160"],["all","全て","テーマ200・ミッション200"]])}</div></div>
-  <div class="field"><span class="label">制限時間</span><div class="seg">
+  <div class="field"><span class="label">ターン数（お題の数）</span><div class="seg" style="grid-template-columns:repeat(5,1fr)">
+    ${seg("turns",S.turns,[[5,"5","ターン"],[10,"10","ターン"],[20,"20","ターン"],[50,"50","ターン"],[0,"∞","無制限"]])}</div></div>
+  <div class="field"><span class="label">1ターンの制限時間</span><div class="seg">
     ${seg("limit",S.limit,[[300,"5分"],[600,"10分"],[0,"無制限"]])}</div></div>
-  <details class="rules"><summary>あそびかた・得点</summary><ol>
-    <li>お題ごとにトークテーマ1枚と、ひとり2つずつの秘密ミッションがランダムで配られる。</li>
-    <li>自分の名前のカードをタップして、ミッションを確認する（相手は見ない）。</li>
-    <li>ミッションには難易度1〜3がついている。1は答えが何通りもある言わせやすいもの、3は特定の言葉を言わせる難しいもの。</li>
-    <li>ひとりの2つは必ず「難易度3が1つ＋難易度1か2が1つ」。2つ目の難易度は2人とも同じなので、いつも同じ条件で勝負。</li>
-    <li>相手に言わせたら「言わせた！」をタップしてミッションを選ぶ。相手が認めたら難易度1・2は+1点、難易度3は+2点。</li>
-    <li>先に2つとも達成した人がそのお題の勝ち。次のテーマとミッションへ進む。</li>
-    <li>テーマは1回、ミッションはひとり1回まで、1つのお題の中で変えられる。</li>
-    <li>行き詰まったら「ギブアップ」で次へ。それまでの得点はそのまま、追加点はなし。</li>
-    <li>時間切れ（無制限なら「ゲーム終了」）で合計点が高い人の勝ち。</li>
-  </ol></details>
   <div class="spacer"></div>
-  <button class="btn" data-act="start">ゲームをはじめる</button>`;
+  <div class="row"><button class="btn ghost" data-act="rules" style="flex:0 0 auto;padding-inline:20px">あそびかた</button><button class="btn" data-act="start">ゲームをはじめる</button></div>`;
 }
 
 function missions(){
   const f=S.flash;S.flash=null;
-  const banner=!f?"":`<div class="sum" style="text-align:center"><b>${f.win>=0?`${nm(f.win)}さんが2つとも達成`:"ギブアップ"}</b><span class="m">前のお題の得点 ― ${nm(0)} +${f.pts[0]}／${nm(1)} +${f.pts[1]}</span></div>`;
+  const banner=!f?"":`<div class="sum" style="text-align:center"><b>${f.win>=0?`${nm(f.win)}さんが2つとも達成`:f.win===-3?"時間切れ":"ギブアップ"}</b><span class="m">前のお題 ― ${P_().map(i=>`${nm(i)} +${f.pts[i]||0}`).join("／")}</span></div>`;
+  const all=S.cur.seen.every(Boolean);
   return `${scoreboard()}${banner}${themeCard()}
   <div class="label">ミッション ― 自分の分だけ見てね</div>
-  <div class="envs">${[0,1].map(i=>`<button class="env p${i} ${S.cur.seen[i]?"seen":""}" data-peek="${i}"><div class="wax">${S.cur.seen[i]?"✓":"?"}</div><span>${nm(i)}</span><small>${S.cur.seen[i]?"確認済み":"タップして見る"}</small></button>`).join("")}</div>
+  <div class="envs" style="grid-template-columns:repeat(${cols()},1fr)">${P_().map(i=>`<button class="env pl ${S.cur.seen[i]?"seen":""}" style="${pc(i)}" data-peek="${i}"><div class="wax">${S.cur.seen[i]?"✓":"?"}</div><span>${nm(i)}</span><small>${S.cur.seen[i]?"確認済み":"タップして見る"}</small></button>`).join("")}</div>
   <div class="spacer"></div>
-  <button class="btn" data-act="talk" data-quiet="1" ${S.cur.seen[0]&&S.cur.seen[1]?"":"disabled"}>トーク開始${S.turn===0?"（時間スタート）":""}</button>
+  <button class="btn" data-act="talk" data-quiet="1" ${all?"":"disabled"}>${all?`トーク開始${S.limit?`（${S.limit/60}分）`:""}`:`全員の確認待ち（${cnt(S.cur.seen)} / ${S.n}）`}</button>
   ${S.turn>0?`<button class="giveup" data-act="end">ゲームを終了して結果を見る</button>`:""}`;
 }
 
 function talk(){
-  const first=S.turn%2,c=S.cur;
-  const cleared=[0,1].flatMap(i=>c.ms[i].map((m,k)=>c.done[i][k]?`<div class="sum"><b>${nm(i)} ・ 達成</b><span class="m">${esc(m)}（+${valOf(m)}）</span></div>`:"")).join("");
+  const first=S.turn%S.n,c=S.cur;
+  const cleared=P_().flatMap(i=>c.ms[i].map((m,k)=>c.done[i][k]?`<div class="sum" style="${pc(i)};border-left-color:var(--pc)"><b>${nm(i)} ・ 達成</b><span class="m">${esc(m)}</span></div>`:"")).join("");
   return `${scoreboard()}${themeCard(`<div class="who"><b>${nm(first)}</b>さんから話しはじめる</div>`)}
   <div class="timer" id="clock">--:--</div>
-  <div class="claims">${[0,1].map(i=>`<button class="claim p${i}" data-claim="${i}" data-quiet="1"><span>${nm(i)}</span><small>言わせた！ ${cnt(c.done[i])}/2</small>${pips(c.done[i])}</button>`).join("")}</div>
-  ${cleared}
-  <div class="row"><button class="btn ghost small" data-act="peekpick">ミッション確認・変更</button><button class="btn ghost small" data-act="pause">一時停止</button></div>
+  <div class="claims" style="grid-template-columns:repeat(${cols()},1fr)">${P_().map(i=>`<button class="claim pl" style="${pc(i)}" data-claim="${i}" data-quiet="1"><span>${nm(i)}</span><small>言わせた！ ${cnt(c.done[i])}/2</small>${pips(c.done[i])}</button>`).join("")}</div>
+  <div class="row"><button class="btn ghost small" data-act="peekpick">ミッション確認</button><button class="btn ghost small" data-act="pause">一時停止</button></div>
   <div class="spacer"></div>
   <button class="giveup" data-act="giveup">ギブアップ（次のお題へ）</button>
-  ${S.limit?"":`<button class="giveup" data-act="end">ゲーム終了</button>`}`;
+  ${S.turns?"":`<button class="giveup" data-act="end">ゲーム終了</button>`}`;
 }
 
+const noteOf=r=>r.win===-1?"ギブアップ":r.win===-3?"時間切れ":r.win===-2?"途中終了":`${nm(r.win)}さんが2つ達成`;
+function logsHTML(){const note=noteOf;return `<div class="logs">${S.log.map((r,n)=>`<div class="lg ${r.win<0?"gu":""}"><div class="lg-h"><b>${n+1}. ${esc(r.theme)}</b><small>${note(r)}</small></div>
+    ${P_().map(i=>`<div class="lg-p" style="${pc(i)}"><span class="lg-n">${nm(i)} <em>+${r.pts[i]||0}</em></span><span class="lg-m">${(r.ms[i]||[]).map((m,k)=>`${r.done[i][k]?"○":"×"} [${LVN[lvOf(m)]}] ${esc(m)}`).join("<br>")}</span></div>`).join("")}</div>`).join("")}</div>`}
 function result(){
-  const t=totals(),w=t[0]===t[1]?-1:(t[0]>t[1]?0:1);
+  const t=totals(),top=Math.max(...t),winners=P_().filter(i=>t[i]===top);
   const wins=i=>S.log.filter(r=>r.win===i).length;
-  const note=r=>r.win===-1?"ギブアップ":r.win===-2?"時間切れ・終了":`${nm(r.win)}さんの勝ち`;
-  return `<div class="label">最終結果 ― ${S.log.length}お題・${fmt(Math.floor(S.elapsed))}</div>
-  <div class="winner">${w<0?"引き分け":`${nm(w)}さんの勝ち`}</div>
-  <div class="final">${[0,1].map(i=>`<div class="box p${i} ${w===i?"win":""}"><div class="n">${nm(i)}</div><div class="v">${t[i]}<small style="font-size:16px">点</small></div>
-    <div class="d">ミッション達成 ${S.log.reduce((a,r)=>a+cnt(r.done[i]),0)}個<br>お題の勝ち ${wins(i)}回</div></div>`).join("")}</div>
-  ${S.log.length?`<div class="label">お題ごとの記録</div>
-  <div class="tablewrap"><table><thead><tr><th>テーマ</th><th>${nm(0)}</th><th>${nm(1)}</th></tr></thead><tbody>
-  ${S.log.map(r=>`<tr class="${r.win<0?"gu":""}"><td>${esc(r.theme)}<br><small>${note(r)}</small></td>${[0,1].map(i=>`<td>+${r.pts[i]}<br>${r.ms[i].map((m,k)=>`<small>${r.done[i][k]?"○":"×"} [${lvOf(m)}] ${esc(m)}</small>`).join("<br>")}</td>`).join("")}</tr>`).join("")}
-  </tbody></table></div>`:""}
+  const order=P_().sort((a,b)=>t[b]-t[a]||wins(b)-wins(a));
+  const rank=i=>1+t.filter(x=>x>t[i]).length;
+  const note=r=>r.win===-1?"ギブアップ":r.win===-3?"時間切れ":r.win===-2?"途中終了":`${nm(r.win)}さんが2つ達成`;
+  const title=winners.length===S.n?"引き分け":`${winners.map(nm).join("さん・")}さんの勝ち`;
+  return `<div class="label">最終結果 ― ${S.log.length}お題・プレイ時間 ${fmt(Math.floor(S.elapsed))}</div>
+  <div class="winner">${title}</div>
+  <div class="ranks">${order.map(i=>`<div class="rk ${t[i]===top?"win":""}" style="${pc(i)}"><span class="pos">${rank(i)}</span><div class="who2"><b>${nm(i)}</b><small>ミッション達成 ${S.log.reduce((a,r)=>a+cnt(r.done[i]||[]),0)}個 ・ お題の勝ち ${wins(i)}回</small></div><span class="pt">${t[i]}<small>点</small></span></div>`).join("")}</div>
+  ${S.log.length?`<button class="btn ghost small" data-act="logs">お題ごとの記録を見る（${S.log.length}）</button>`:""}
+  
   <div class="spacer"></div>
   <div class="row"><button class="btn ghost" data-act="home">設定に戻る</button><button class="btn" data-act="start">もう一回</button></div>`;
 }
@@ -481,18 +624,19 @@ const P=()=>document.getElementById("peek"),PI=()=>document.getElementById("peek
 function openOverlay(html){stopClock();clearInterval(tick);PI().innerHTML=html;P().hidden=false;bindPeek()}
 function closeOverlay(){P().hidden=true;if(S.screen==="talk")runClock();render()}
 function peekPick(){
-  openOverlay(`<h2>だれが確認する？</h2><p class="lede">相手には画面を見せないでね。確認中は時間が止まります。</p>
-  <div class="row">${[0,1].map(i=>`<button class="btn ghost" data-peek="${i}">${nm(i)}</button>`).join("")}</div>
+  openOverlay(`<h2>だれが確認する？</h2><p class="lede">ほかの人には画面を見せないでね。確認中は時間が止まります。</p>
+  <div class="pickgrid" style="grid-template-columns:repeat(${cols()},1fr)">${P_().map(i=>`<button class="btn ghost pl-btn" style="${pc(i)}" data-peek="${i}">${nm(i)}</button>`).join("")}</div>
   <button class="btn ghost small" data-pact="close">やめる</button>`);
 }
 function peekShow(i){
   sfx("open");
   const c=S.cur,ch=c.mChanged[i];
+  const who=S.n===2?`「相手」は${nm(1-i)}さんのこと。`:"「相手」は自分以外の誰でもOK。";
   openOverlay(`<div class="label">${nm(i)}さんだけ見てね</div>
   <div class="card deal" style="padding-block:24px"><div class="corner"><span>${nm(i)}のミッション</span><span>${cnt(c.done[i])} / 2</span></div>
   ${c.ms[i].map((m,k)=>`<div class="mrow ${c.done[i][k]?"done":""}"><span class="num">${k+1}</span><div class="mtxt">${badge(m)}${esc(m)}${c.done[i][k]?`<em>達成</em>`:""}</div>
     ${!c.done[i][k]&&!ch?`<button class="chg" data-pact="chgm" data-who="${i}" data-k="${k}">変える</button>`:""}</div>`).join("")}
-  <p class="hint">「相手」は${nm(1-i)}さんのこと。ミッション変更はこのお題で1回だけ（同じ難易度のものに変わる）${ch?"（使用済み）":""}。</p></div>
+  <p class="hint">${who}ミッション変更はこのお題で1回だけ（同じ難易度のものに変わる）${ch?"（使用済み）":""}。</p></div>
   <button class="btn" data-pact="close" data-who="${i}">覚えた・閉じる</button>`);
 }
 function claimShow(i){
@@ -505,16 +649,17 @@ function claimShow(i){
 }
 function claimReveal(i,k){
   sfx("suspense");
+  const ask=S.n===2?`<b>${nm(1-i)}</b>さん、本当にやった（言った）？`:"言った人、本当にやった（言った）？ みんなで判定してね。";
   openOverlay(`<div class="label">${nm(i)}さんが「言わせた！」</div>
   <div class="card deal" style="padding-block:24px"><div class="corner"><span>${nm(i)}さんのミッション</span><span>公開</span></div>
   <div style="text-align:center">${badge(S.cur.ms[i][k])}</div><div class="mission-big">${esc(S.cur.ms[i][k])}</div>
-  <p class="hint" style="color:var(--ink);font-size:15px"><b>${nm(1-i)}</b>さん、本当にやった（言った）？</p></div>
-  <div class="row"><button class="btn ghost" data-pact="close" data-rej="1" data-quiet="1">やってない</button><button class="btn" data-pact="accept" data-who="${i}" data-k="${k}" data-quiet="1">認める（+${valOf(S.cur.ms[i][k])}点）</button></div>`);
+  <p class="hint" style="font-size:15px">${ask}</p></div>
+  <div class="row"><button class="btn ghost" data-pact="close" data-rej="1" data-quiet="1">やってない</button><button class="btn" data-pact="accept" data-who="${i}" data-k="${k}" data-quiet="1">認める（+1点）</button></div>`);
 }
 function giveupShow(){
   sfx("swish");
-  openOverlay(`<h2>ギブアップする？</h2><p class="lede">2人のミッションを公開して次のお題に進みます。ここまでの得点はそのままです。</p>
-  ${[0,1].map(i=>`<div class="sum"><b>${nm(i)}</b>${S.cur.ms[i].map((m,k)=>`<span class="m">${S.cur.done[i][k]?"○":"×"} [難易度${lvOf(m)}] ${esc(m)}</span>`).join("")}</div>`).join("")}
+  openOverlay(`<h2>ギブアップする？</h2><p class="lede">全員のミッションを公開して次のお題に進みます。ここまでの得点はそのままです。</p>
+  ${P_().map(i=>`<div class="sum" style="${pc(i)};border-left-color:var(--pc)"><b>${nm(i)}</b>${S.cur.ms[i].map((m,k)=>`<span class="m">${S.cur.done[i][k]?"○":"×"} [${LVN[lvOf(m)]}] ${esc(m)}</span>`).join("")}</div>`).join("")}
   <div class="row"><button class="btn ghost" data-pact="close">続ける</button><button class="btn" data-pact="dogiveup">次のお題へ</button></div>`);
 }
 function endShow(){
@@ -536,14 +681,17 @@ function bindPeek(){
     P().hidden=true;
     if(a==="dogiveup"){sfx("giveup");return endTurn(-1)}
     if(a==="finish")return finish();
+    if(a==="timeupnext"){sfx("giveup");return endTurn(-3)}
   });
 }
 
 function bind(){
   const q=s=>document.querySelectorAll("#app "+s);
-  q("#n0,#n1").forEach((el,i)=>el.oninput=()=>{S.names[i]=el.value.trim();save()});
+  q("[data-name]").forEach(el=>el.oninput=()=>{S.names[+el.dataset.name]=el.value.trim();save()});
+  q("[data-n]").forEach(b=>b.onclick=()=>{S.n=+b.dataset.n;render()});
   q("[data-mode]").forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;render()});
   q("[data-limit]").forEach(b=>b.onclick=()=>{S.limit=+b.dataset.limit;render()});
+  q("[data-turns]").forEach(b=>b.onclick=()=>{S.turns=+b.dataset.turns;render()});
   q("[data-peek]").forEach(b=>b.onclick=()=>peekShow(+b.dataset.peek));
   q("[data-claim]").forEach(b=>b.onclick=()=>claimShow(+b.dataset.claim));
   q("[data-act]").forEach(b=>b.onclick=()=>act(b.dataset.act));
@@ -554,6 +702,20 @@ function act(a){
   if(a==="peekpick")return peekPick();
   if(a==="giveup")return giveupShow();
   if(a==="end")return endShow();
+  if(a==="rules")return openOverlay(`<h2>あそびかた・得点</h2><div class="rulesbox"><ol>
+    <li>お題ごとにトークテーマ1枚と、ひとり2つずつの秘密ミッションがランダムで配られる。</li>
+    <li>自分の名前のカードをタップして、ミッションを確認する（ほかの人は見ない）。</li>
+    <li>ミッションの「相手」は自分以外の誰でもOK。3人以上なら、誰に言わせてもいい。</li>
+    <li>ミッションの難易度は「低」と「高」。低は答えが何通りもある言わせやすいもの、高は特定の言葉を言わせるような難しいもの。</li>
+    <li>ひとりの2つは必ず「低が1つ＋高が1つ」。全員が毎回同じ条件で勝負。</li>
+    <li>言わせたら自分の「言わせた！」をタップしてミッションを選ぶ。言った人が認めたら、難易度に関係なく+1点。</li>
+    <li>誰かが先に2つとも達成したら、そのお題は終わり。次のテーマとミッションへ進む。</li>
+    <li>テーマは1回、ミッションはひとり1回まで、1つのお題の中で変えられる。</li>
+    <li>行き詰まったら「ギブアップ」で次へ。それまでの得点はそのまま、追加点はなし。</li>
+    <li>制限時間は1ターンごと。時間切れになったら、そのお題は終了して次へ（それまでの得点はそのまま）。</li>
+    <li>選んだターン数を終えたら結果発表。合計点が一番高い人の勝ち（ターン無制限なら「ゲーム終了」で結果へ）。</li>
+  </ol></div><button class="btn" data-pact="close">閉じる</button>`);
+  if(a==="logs")return openOverlay(`<h2>お題ごとの記録</h2>${logsHTML()}<button class="btn" data-pact="close">閉じる</button>`);
   if(a==="pause")return openOverlay(`<div class="toast">PAUSE</div><button class="btn" data-pact="close">再開する</button>`);
   if(a==="chgtheme"){if(S.cur.tChanged)return;sfx("swish");S.cur.theme=drawTheme();S.cur.tChanged=true;return render()}
   if(a==="talk"){S.screen="talk";runClock();sfx("start")}
